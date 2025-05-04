@@ -1,0 +1,26 @@
+{
+  "include": "~/.config/waybar/modules.jsonc",
+  "layer": "bottom",
+  "position": "top",
+  "height": 20,
+  "modules-left": [
+    "hyprland/workspaces",
+    "hyprland/submap"
+  ],
+  "modules-center": [
+    "custom/cava",
+    "custom/calendar"
+  ],
+  "modules-right": [
+    // "idle_inhibitor",
+    "tray",
+    "hyprland/language",
+    "custom/bluetooth",
+    "custom/memory",
+    "pulseaudio",
+    "network",
+    "custom/notification",
+    "custom/battery",
+    "clock"
+  ]
+}

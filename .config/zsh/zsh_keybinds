@@ -1,0 +1,21 @@
+
+# cd navigation (see: functions.zsh)
+# zle -N sd
+# bindkey -s '^P' 'sd\n'
+
+# fix delete in terminal
+bindkey "^[[3~" delete-char # fix delete key
+
+# home / end
+bindkey "^A" beginning-of-line
+bindkey "^E" end-of-line
+
+# use ctrl-z to toggle in and out of bg
+if [[ $- == *i* ]]; then 
+  stty susp undef
+  bindkey '^Z' _toggle_fg
+  zle -N _toggle_fg
+  _toggle_fg() {
+    fg
+  }
+fi

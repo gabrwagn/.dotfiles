@@ -1,0 +1,130 @@
+* {
+  border:        none;
+  border-radius: 0;
+  font-family:   JetBrains Mono, monospace;
+  font-size:     15px;
+  box-shadow:    none;
+  text-shadow:   none;
+  transition-duration: 0s;
+  /* bg     : rgba(21, 21, 21, 0.7); */
+  /* fg     : rgba(232, 227, 227, 1.0); */
+  /* red     : rgba(182, 100, 103, 0.8); */
+  /* green   : rgba(140, 151, 125, 1.0); */
+  /* yellow  : rgba(217, 188, 140, 1.0); */
+  /* blue    : rgba(141, 163, 185, 1.0); */
+  /* magenta : rgba(169, 136, 176, 1.0); */
+  /* cyan    : rgba(138, 166, 162, 1.0); */
+}
+
+window#waybar {
+  padding: 0;
+  margin: 0;
+  color:      rgba(255, 245, 245, 1);  /* Light foreground */
+  background: rgba(30, 28, 28, 0.00); /* Transparent background */
+}
+
+/*window#waybar.solo {
+  color:      rgba(255, 245, 245, 1);
+  background: rgba(30, 28, 28, 0.85);
+}*/
+
+#workspaces {
+  margin: 0 5px 0 10px;
+}
+
+#workspaces button {
+  padding:    0 5px;
+  color:      rgba(180, 170, 170, 0.4); /* Muted workspace text */
+}
+
+#workspaces button.visible {
+  color:      rgba(255, 245, 245, 1); /* Active workspace text */
+}
+
+button.focused {
+  border-bottom: 1px solid #B66467; /* Highlight active workspace */
+  /*border-bottom: 3px solid rgba(255, 245, 245, 0);*/
+}
+
+#workspaces button.urgent {
+  color:      rgba(255, 85, 85, 1); /* Urgent workspace alert */
+}
+
+#workspaces button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+#mode,
+#cpu,
+#network,
+#pulseaudio,
+#idle_inhibitor,
+#backlight,
+#custom-battery,
+#custom-panel,
+/* #custom-cava, */
+#custom-notification,
+#custom-calendar,
+#custom-bluetooth,
+#custom-storage,
+#custom-spotify,
+#custom-weather,
+#custom-mail,
+#language {
+  margin:     0px 6px 0px 8px;
+  min-width:  25px;
+  color: #E8E3E3;
+  border-bottom: 1px solid #B66467;
+}
+
+#custom-cava {
+  padding: 2px;
+  color: #BBB6B6;
+  font-size: 11px;
+}
+
+#custom-calendar {
+  font-size: 13px;
+  color: #BBB6B6;
+}
+
+#custom-memory {
+  margin:     0px 6px 0px 10px;
+  min-width:  30px;
+  color:      rgba(220, 220, 220, 1); /* Standard module text */
+  border-bottom: 1px solid #B66467; /* Highlight active workspace */
+  font-size: 11px;
+  font-family: Arial;
+}
+
+#tray {
+  margin:     0px 6px 0px 20px;
+  min-width:  25px;
+  color:      rgba(220, 220, 220, 1); /* Standard module text */
+  border-bottom: 1px solid #B66467; /* Highlight active workspace */
+}
+
+#clock {
+  margin:     0px 8px 0px 10px;
+  min-width:  70px;
+  color:      rgba(255, 200, 100, 1); /* Highlighted clock text */
+  border-bottom: 1px solid rgba(255, 200, 100, 1); /* Highlight active workspace */
+  font-size: 14px;
+}
+
+#custom-battery.warning {
+  color:       rgba(255, 180, 50, 1); /* Battery warning */
+}
+
+#custom-battery.critical {
+  color:      rgba(255, 85, 85, 1); /* Battery critical */
+}
+
+#custom-storage.warning {
+  color:      rgba(255, 180, 50, 1); /* Storage warning */
+}
+
+#custom-storage.critical {
+  color:      rgba(255, 85, 85, 1); /* Storage critical */
+}
+

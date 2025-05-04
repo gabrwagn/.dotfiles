@@ -1,0 +1,29 @@
+
+# Aliases for common commands
+alias sudo='sudo '
+alias ls='ls -lah'         # Colored output for `ls`
+alias ll='ls -lah'                 # List all files in long format
+alias grep='rg --color=auto'      # Highlight search results
+alias vim='nvim'                      # Quick launch Neovim
+alias v='nvim'                      # Quick launch Neovim
+alias gs='git status'               # Git status shortcut
+alias ga='git add'                  # Git add shortcut
+alias gb='git branch'            # Git commit shortcut
+alias gc='git commit'            # Git commit shortcut
+alias gp='git push'                 # Git push shortcut
+alias gpf='git push --force-with-lease'                 # Git push shortcut
+alias gsw='git switch $(git branch | fzf --reverse)' # Git switch branch
+alias gg='git lg'
+alias task='go-task'
+alias cl="clear"
+alias ..='cd ..'
+alias ...='cd ../..'
+alias code='vim --cmd "cd ~/docs/repos/"'
+alias cfg='vim --cmd "cd ~/.config"'
+alias zshrc='vim --cmd "cd ~/.config/zsh/"'
+alias reloadzshrc='echo "reloading .zshrc" && source ~/.config/zsh/.zshrc'
+
+if command -v exa >/dev/null; then
+    alias ls='exa -lah --icons'
+    alias ll='exa -lah --icons'
+fi

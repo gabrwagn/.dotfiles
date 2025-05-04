@@ -1,0 +1,301 @@
+
+### Git Functions
+
+# git diff
+gd () {
+  local is_inside_git_repo=$(git rev-parse --is-inside-work-tree 2>/dev/null)
+
+  # if inside a git repo
+  if [[ "$is_inside_git_repo" == "true" ]]; then
+    local commits=$(
+      (
+      if [[ -n $(git diff --name-only --staged) ]]; then
+        echo "staged $(git rev-parse --short HEAD) Staged changes" ;
+      fi
+      if [[ -n $(git diff --name-only) ]]; then
+        echo "unstaged $(git rev-parse --short HEAD) Unstaged changes" ;
+      fi
+        git log --oneline
+      ) | fzf --reverse --border --multi=2 \
+          --prompt="Pick commit(s) to diff: " \
+          --preview 'if [[ {1} == "unstaged" ]]; then 
+                      git diff --color=always
+                    elif [[ {1} == "staged" ]]; then
+                      git diff --staged --color=always
+                    else 
+                      git show --color=always {1}
+                    fi' \
+          --preview-window=right:60% \
+          | awk '{print $1}'
+    )
+
+    first_commit=$(echo "$commits" | head -n1)
+    second_commit=$(echo "$commits" | tail -n1)
+
+    echo "selected commits: $commits"
+
+    # Check if second line exists and is different from first
+    if [ -n "$second_commit" ] && [ "$first_commit" != "$second_commit" ]; then
+      # Two different commits selected
+      git diff "$second_commit^".."$first_commit"
+    elif [ "$first_commit" = "staged" ]; then
+      # Unstaged selected
+      git diff --staged
+    elif [ "$first_commit" = "unstaged" ]; then
+      # Unstaged selected
+      git diff
+    elif [ -n "$first_commit" ]; then
+      # One commit selected
+      git diff "$first_commit^".."$first_commit"
+    else
+      echo "No commits selected"
+    fi
+  else
+    local color_repo='\033[1;34m'
+    local color_staged='\033[32m'
+    local color_unstaged='\033[31m'
+    local color_prefix='\033[90m'
+    local color_reset='\033[0m'
+
+    local repos=()
+    while IFS= read -r repo_path; do
+        [[ -n "$repo_path" ]] && repos+=("$repo_path")
+    done < <(fd --max-depth 3 --type d --hidden '.git' --exec dirname {} 2>/dev/null | sed 's|^\./||' )
+
+    if [[ ${#repos[@]} -eq 0 ]]; then
+        echo "No Git repositories found."
+        return 1 # Or exit 1 if not in a function/sourced script
+    fi
+
+    for repo in "${repos[@]}"; do
+        local status_output=$(git -C "$repo" status --short 2>/dev/null)
+        local git_status=$? # Capture exit status of git command
+
+        if [[ $git_status -ne 0 || -z "$status_output" ]]; then
+            continue
+        fi
+
+        # Print repo name in blue
+        printf "${color_repo}  󰉋 %s${color_reset}\n" "$repo"
+
+        # Collect and count file changes
+        local changes=()
+        while IFS= read -r line; do
+            [[ -n "$line" ]] && changes+=("$line")
+        done <<< "$status_output"
+
+        local total_changes=${#changes[@]}
+        local index=0
+
+      for change in "${changes[@]}"; do
+          index=$((index + 1))
+          local prefix="├──"
+          [[ $index -eq $total_changes ]] && prefix="└──"
+
+          # Ensure change is not empty before checking its status
+          if [[ -n "$change" ]]; then
+              # Determine color based on Git status
+              local color_var="$color_unstaged"  # Default to untracked (gray)
+              if [[ "$change" =~ ^[^?[:space:]] ]]; then
+                  color_var="$color_staged"   # Staged (green)
+              elif [[ "$change" =~ ^\ [^[:space:]] ]]; then
+                  color_var="$color_unstaged" # Unstaged (red)
+              fi
+
+              printf "  %b%s%b%s%b\n" "$color_prefix" "$prefix" "$color_var" "$change" "$color_reset"
+          fi
+      done
+    done
+  fi
+}
+
+# git commit --fixup
+gfix() {
+  local base="${1:-main}"
+  # Get the list of commits and use fzf to select one
+  local commit=$(git log $base..HEAD --oneline | fzf --reverse --border --prompt="Pick a commit for fixup: " | awk '{print $1}')
+  # Check if a commit was selected
+  #
+  if [[ -n $commit ]]; then
+    # Create a fixup commit
+    git commit --fixup=$commit
+  else
+    echo "No commit selected."
+  fi
+}
+
+### Terminal Utils
+
+# cd navigatoin
+sd() {
+  local excludes="--exclude node_modules --exclude .git --exclude go"
+  local FZF_CMD="fd . ~ --type d --color always --color=never --full-path $excludes"
+
+  # Use fd to list directories and pass them to fzf
+  local selected_dir=$(eval "$FZF_CMD" | fzf \
+    --bind "alt-h:reload($FZF_CMD --hidden)" \
+    --header "alt-h to show hidden directories" \
+    --preview 'exa -l1 --icons --color=always {}' \
+    --reverse \
+    --border \
+    +m)
+
+  [ -n "$selected_dir" ] && cd "$selected_dir"
+}
+
+pullpr () {
+  remote_url=$(git config --get remote.origin.url) 
+  if [[ $remote_url =~ "github.com" ]]
+  then
+    pull_prefix="pull" 
+  elif [[ $remote_url =~ "gitlab.com" ]]
+  then
+    pull_prefix="merge-requests" 
+  else
+    echo "error: could not determine git provider (github/gitlab)"
+    return
+  fi
+  for pr in "$@"
+  do
+    i=0 
+    git fetch origin "$pull_prefix/$pr/head"
+    while git rev-parse --verify "pr$pr-$i"
+    do
+      if [[ "$(git log -1 --format=%H FETCH_HEAD)" == "$(git log -1 --format=%H "pr$pr-$i")" ]]
+      then
+        git checkout "pr$pr-$i"
+        return
+      fi
+      i=$((i+1))
+    done
+    git fetch origin "$pull_prefix/$pr/head:pr$pr-$i"
+    git checkout "pr$pr-$i"
+  done
+}
+
+### Docker
+
+# logging
+# tf () {
+#   local template='{{color .ContainerColor .ContainerName}} {{with $d := .Message | tryParseJSON}}{{msToRFC3339Nano $d.time}} [{{or (bunyanLevelColor $d.level) (levelColor $d.level)}}] {{or $d.message $d.msg}}{{if $d.data}}{{"\n"}}  data: {{$d.data}}{{end}}{{if $d.stack}}{{"\n"}}{{$d.stack}}{{end}}{{else}}{{.Message}}{{end}}{{"\n"}}'
+#   if [[ $# -eq 0 ]]; then
+#     local containers="$(docker ps --format '{{.Names}}' | fzf --multi --header "Select containers to tail logs" --border --preview 'docker inspect --format "{{json .}}" {} | jq -C')"
+#     echo "Selected containers: $containers"
+#     tailfin --template="$template" $containers
+#     echo "DONE containers: $containers"
+#
+#
+#   else
+#     tailfin --template="$template" "$@"
+#
+#   fi
+# }
+tf () {
+  local template='{{color .ContainerColor .ContainerName}} {{with $d := .Message | tryParseJSON}}{{msToRFC3339Nano $d.time}} [{{or (bunyanLevelColor $d.level) (levelColor $d.level)}}] {{or $d.message $d.msg}}{{if $d.data}}{{"\n"}}  data: {{$d.data}}{{end}}{{if $d.stack}}{{"\n"}}{{$d.stack}}{{end}}{{else}}{{.Message}}{{end}}{{"\n"}}'
+  tailfin --template="$template" "$@"
+}
+
+tectl () {
+  if [[ "$1" == "--help" || "$1" == "-h" ]]; then
+    echo "Usage: tectl [options] [command]"
+    echo "Options:"
+    echo "  --help       Show this help message"
+    echo "  --version    Show version information"
+    return
+  elif [[ "$1" == "--version" || "$1" == "-v" ]]; then
+    echo "te-ctl version 0.1.0"
+    return
+  elif [[ "$1" == "run" ]]; then
+    shift
+    tectlrun "$@"
+    return
+  elif [[ "$1" == "status" ]]; then
+    shift
+    tectlstatus "$@"
+    return
+  elif [[ "$1" == "env" ]]; then
+    shift
+    tectlenv "$@"
+    return
+  fi
+
+  UUID=$(id -u) docker compose -f "/home/gabwag/docs/repos/te-ctl/docker-compose.yml" "$@"
+}
+
+tectlstatus() {
+  local COLOR_GREEN="\033[0;32m"
+  local COLOR_RED="\033[0;31m"
+  local COLOR_NC="\033[0m" # No Color (reset)
+  # You might want to make the file path an argument in the future
+  local compose_file="/home/gabwag/docs/repos/te-ctl/docker-compose.yml"
+
+  UUID=$(id -u) docker compose -f "$compose_file" ps --all --format 'table {{.Service}}\t{{.Status}}' | \
+  awk -v green="$COLOR_GREEN" -v red="$COLOR_RED" -v nc="$COLOR_NC" '
+    NR==1 {print $0; next}
+    $2 ~ /^Up/ && $0 !~ /\(unhealthy\)/ {print green $0 nc; next}
+    {print red $0 nc}
+  '
+}
+
+tectlrun() {
+  local UUID=$(id -u)
+  local TECTL_DIR="$HOME/docs/repos/te-ctl"
+  local COMPOSE_FILE="$TECTL_DIR/docker-compose.yml"
+  local NPMRC_SRC="$HOME/.npmrc"
+  local NPMRC_DST="/tmp/.npmrc"
+  local mount_npmrc=false
+  local args=()
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --npmrc)
+        mount_npmrc=true
+        shift
+        ;;
+      *)
+        args+=("$1")
+        shift
+        ;;
+    esac
+  done
+
+  local cmd="UUID=$UUID docker compose -f $COMPOSE_FILE run -u $UUID --rm"
+
+  if [[ "$mount_npmrc" == true ]]; then
+    cmd="$cmd -v $NPMRC_SRC:$NPMRC_DST -e NPM_CONFIG_USERCONFIG=$NPMRC_DST"
+  fi
+
+  echo "$cmd ${args[@]}"
+  eval "$cmd" "${args[@]}"
+}
+
+tectlenv() {
+  local TECTL_DIR="$HOME/docs/repos/te-ctl"
+  if [[ "$1" == "set" ]]; then
+    shift  # Remove "set" from arguments
+    for env_filename in "$@"; do
+      local env_file="$TECTL_DIR/$env_filename"
+      if [[ -f "$env_file" ]]; then
+        export $(grep -v '^#' "$env_file" | xargs -d '\n')
+        echo "Loaded environment variables from $env_file"
+      else
+        echo "File not found: $env_file"
+      fi
+    done
+  elif [[ "$1" == "unset" ]]; then
+    shift  # Remove "unset" from arguments
+    for env_filename in "$@"; do
+      local env_file="$TECTL_DIR/$env_filename"
+      if [[ -f "$env_file" ]]; then
+        while IFS='=' read -r key _; do
+            [[ -n "$key" ]] && unset "$key"
+        done < <(grep -v '^#' "$env_file")
+        echo "Unset environment variables from $env_file"
+      else
+        echo "File not found: $env_file"
+      fi
+    done
+  else
+    echo "Usage: tectl-env {set|unset} file1.env [file2.env ...]"
+  fi
+}

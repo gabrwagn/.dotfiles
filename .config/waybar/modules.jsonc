@@ -1,0 +1,134 @@
+{
+  "sway/mode": {
+    "format": " {}"
+  },
+  "sway/workspaces": {
+    "format": "{name}",
+    "disable-scroll": true
+  },
+  "sway/window": {
+    "max-length": 40,
+    "tooltip": false,
+    "icon": false
+  },
+  "hyprland/language": {
+    "format": "{short}"
+  },
+  "clock": {
+    "format": " {:%H:%M}",
+    "tooltip": "{:%A, %d %B %Y}",
+    "on-click": "alacritty -e calcurse"
+  },
+  "network": {
+    "format": "{icon}",
+    "format-alt": "{ipaddr}/{cidr} {icon}",
+    "format-alt-click": "click-right",
+    "format-icons": {
+      // "wifi": ["", "" ," "],
+      "wifi": [
+        "󰤟 ",
+        "󰤢 ",
+        "󰤥 ",
+        " "
+      ],
+      "ethernet": [
+        ""
+      ],
+      "disconnected": [
+        "󰖪"
+      ]
+    },
+    "on-click": "/home/gabwag/bin/networkmanager_dmenu",
+    "tooltip": false
+  },
+  "pulseaudio": {
+    "format": "{icon}",
+    "format-alt": "{volume} {icon}",
+    "format-alt-click": "click-middle",
+    "format-muted": " ",
+    "format-icons": {
+      "phone": [
+        " ",
+        "  "
+      ],
+      "headset": [
+        " "
+      ],
+      "default": [
+        " ",
+        " "
+      ]
+    },
+    "scroll-step": 1,
+    "on-click": "pavucontrol",
+    "on-click-right": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+    "tooltip": false
+  },
+  "backlight": {
+    "format": "{icon}",
+    "format-alt": "{percent}% {icon}",
+    "format-alt-click": "click-right",
+    "format-icons": [
+      "",
+      ""
+    ]
+  },
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": {
+      "activated": "",
+      "deactivated": ""
+    },
+    "tooltip": false
+  },
+  "custom/memory": {
+    "exec": "~/.config/waybar/custom/memory.sh",
+    "return-type": "json",
+    "interval": 5,
+    "on-click": "alacritty -e btop"
+  },
+  "custom/bluetooth": {
+    "exec": "~/.config/waybar/custom/bluetooth.sh",
+    "return-type": "json",
+    "interval": 10,
+    "on-click": "/home/gabwag/bin/rofi-bluetooth",
+    "on-click-right": "~/.config/waybar/custom/actions/bluetooth-toggle.sh"
+  },
+  "custom/battery": {
+    "exec": "~/.config/waybar/custom/battery.sh",
+    "return-type": "json",
+    "interval": 30
+  },
+  "custom/calendar": {
+    "exec": "~/.config/waybar/custom/calendar.sh",
+    "interval": 60,
+    "on-click": "~/.config/waybar/custom/actions/calendar-open.sh"
+  },
+  "tray": {
+    "icon-size": 18
+  },
+  "custom/notification": {
+    "tooltip": false,
+    "format": "{icon}",
+    "format-icons": {
+      "notification": "<span foreground='#B66467'><sup></sup></span>",
+      "none": "",
+      "dnd-notification": "<span foreground='#B66467'><sup></sup></span>",
+      "dnd-none": "",
+      "inhibited-notification": "<span foreground='#B66467'><sup></sup></span>",
+      "inhibited-none": "",
+      "dnd-inhibited-notification": "<span foreground='#B66467'><sup></sup></span>",
+      "dnd-inhibited-none": ""
+    },
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "escape": true
+  },
+  "custom/cava": {
+    "exec": "~/.config/hypr/scripts/waybar-cava.sh",
+    "format": "{}"
+  }
+}

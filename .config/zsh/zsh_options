@@ -1,0 +1,16 @@
+# Set Zsh options
+setopt autocd                  # Change directory just by typing its name
+setopt correct                 # Auto-correct minor typos in commands
+setopt nocaseglob              # Case-insensitive globbing
+setopt histignoredups sharehistory  # Don't store duplicate history & sync history across sessions
+
+# History settings
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt appendhistory           # Append history instead of overwriting
+
+# Enable completion features
+autoload -Uz compinit && compinit
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'

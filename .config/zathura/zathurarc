@@ -1,0 +1,10 @@
+set recolor-lightcolor "#151515"
+set recolor-darkcolor "rgba(255, 255, 255, 1)"
+set default-bg "#151515"
+map i recolor
+set recolor true
+set adjust-open "best"
+set guioptions none
+map j feedkeys "<C-Down>"
+map k feedkeys "<C-Up>"
+

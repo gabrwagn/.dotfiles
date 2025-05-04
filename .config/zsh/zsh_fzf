@@ -1,0 +1,4 @@
+# FZF settings
+FZF_DEFAULT_COMMAND="fd --type f --hidden -E \"*Test.[ch]pp\" -E \".git\""
+FZF_CTRL_R_OPTS=--reverse
+source <(fzf --zsh)
