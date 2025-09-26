@@ -1,0 +1,59 @@
+
+    /* base00 = "#151515", */
+  /* base01 = "#1F1F1F", */
+  /* base02 = "#2E2E2E", */
+  /* base03 = "#626262", */
+  /* base04 = "#BBB6B6", */
+  /* base05 = "#E8E3E3", */
+  /* base06 = "#E8E3E3", */
+  /* base07 = "#E8E3E3", */
+  /* base08 = "#B66467", */
+  /* base09 = "#D9BC8C", */
+  /* base0A = "#D9BC8C", */
+  /* base0B = "#8C977D", */
+  /* base0C = "#8AA6A2", */
+  /* base0D = "#8DA3B9", */
+  /* base0E = "#A988B0", */
+  /* base0F = "#BBB6B6", */
+
+@import url(chrome/autohide_main_toolbar.css);
+
+:root { 
+  --toolbar-bgcolor: #151515E6 !important; 
+  --toolbar-color: transparent !important; 
+  --tab-selected-bgcolor: #2E2E2E !important;
+  --tab-selected-outline-color: #D9BC8C !important;
+  --tab-outline-color: #626262 !important;
+  --toolbar-field-focus-background-color: #151515E6 !important;
+  --arrowpanel-background: #151515E6 !important;
+  --toolbox-bgcolor: #151515 !important;
+  --toolbox-bgcolor-inactive: #151515 !important;
+  --tabpanel-background-color: #E8E3E3E6 !important;
+  --tab-border-radius: 0px !important;
+  --tab-ouline: 0px solid transparent !important;
+  --tab-min-height: 0px !important;
+  --tab-selected-bgcolor: transparent !important;
+
+  --border-radius-small: 0px !important;
+  --arrowpanel-border-radius: 0px !important;
+  --toolbarbutton-radius: 0px !important;
+}
+
+.tabbrowser-tab {
+  border-radius: 0px !important;
+  border: 0px !important;
+  height: 30px !important;
+}
+
+.tab-background {
+  outline: 0px solid transparent !important;
+}
+
+.tab-background[selected] {
+  border-bottom: 2px solid #D9BC8C !important;
+}
+
+.browserContainer,
+#tabbrowser-tabpanels { background: #151515  !important; }
+
+

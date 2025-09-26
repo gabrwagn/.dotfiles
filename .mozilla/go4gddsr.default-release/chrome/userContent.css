@@ -1,0 +1,35 @@
+/*@-moz-document url(about:newtab), url("about:home") { html{ --newtab-background-color: #151515 !important; --newtab-background-color-secondary: #151515 !important; } } */
+/**/
+/*@-moz-document url-prefix(about:blank), url-prefix(about:newtab), url-prefix(about:home) {*/
+/*  body {*/
+/*    background-color: transparent !important;*/
+/*  }*/
+/*  html {*/
+/*    background-color: transparent !important;*/
+/*  }*/
+/*}*/
+
+/*@-moz-document url-prefix(about:blank), url-prefix(about:newtab), url-prefix(about:home) {*/
+/*  html, body {*/
+/*    background-color: #151515 !important;*/
+/*  }*/
+/*}*/
+
+@-moz-document 
+    url-prefix("https://core.timeedit.net"),
+    url-prefix("https://man.archlinux.org"),
+    url-prefix("https://www.prisjakt.nu"),
+    url-prefix("https://us02web.zoom.us"),
+    url-prefix("http://localhost"),
+    url-prefix("http://localhost:8080/timeedit_exam_demo/client"),
+    url-prefix("www.computersalg.se"),
+    url-prefix("https://www.pulumi.com/")
+    url-prefix("https://www.app.pulumi.com/")
+{
+    html, body {
+        background-color: #E8E3E3 !important;
+        color: #000 !important; /* optional, for better contrast */
+    }
+}
+
+/*@-moz-document url(about:newtab), url("about:home") { html{ --newtab-background-color: transparent !important; --newtab-background-color-secondary: transparent !important; } } */
