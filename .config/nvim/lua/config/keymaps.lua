@@ -12,6 +12,9 @@ map("n", "<Tab>", ">>")
 map("n", "<S-Tab>", "<<")
 map("v", "<Tab>", ">gv")
 map("v", "<S-Tab>", "<gv")
+map('n', '<C-i>', '<C-i>') -- Distinguish <Tab> from <C-i> in normal mode, allowing jump in history despite <Tab> being remapped
+
+map('n', '<leader>ch', '<cmd>ClangdSwitchSourceHeader<cr>', { desc = "Switch Source/Header" })
 
 map('n', '<leader>gd', function()
     if next(require('diffview.lib').views) == nil then
@@ -31,9 +34,12 @@ map("n", "<leader>xX", function()
   require("fzf-lua").diagnostics_document({ actions = require("fzf-lua.actions").trouble })
 end, { desc = "Diagnostics (Troube=>fzf-lua)", silent = true })
 
+map("n", "glc", function() require("timber.actions").clear_log_statements({ global = false }) end, { desc = "Clear log statements in current buffer" })
+map("n", "gls", function() require("timber.actions").search_log_statements() end, { desc = "search_log_statements" })
+
 local wk = require("which-key")
 wk.add {
-  { '<leader>gt', group = 'Github' },
+  { '', group = 'Github' },
   { '<leader>gtc', group = 'Commits' },
   { '<leader>gtcc', '<cmd>GHCloseCommit<cr>', desc = 'Close' },
   { '<leader>gtce', '<cmd>GHExpandCommit<cr>', desc = 'Expand' },

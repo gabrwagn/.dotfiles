@@ -5,6 +5,7 @@ alias ls='ls -lah'         # Colored output for `ls`
 alias ll='ls -lah'                 # List all files in long format
 alias grep='rg --color=auto'      # Highlight search results
 alias vim='nvim'                      # Quick launch Neovim
+alias vi='nvim'                      # Quick launch Neovim
 alias v='nvim'                      # Quick launch Neovim
 alias gs='git status'               # Git status shortcut
 alias ga='git add'                  # Git add shortcut
@@ -22,6 +23,7 @@ alias code='vim --cmd "cd ~/docs/repos/"'
 alias cfg='vim --cmd "cd ~/.config"'
 alias zshrc='vim --cmd "cd ~/.config/zsh/"'
 alias reloadzshrc='echo "reloading .zshrc" && source ~/.config/zsh/.zshrc'
+alias rm='rm -i'               # Prompt before deleting files
 
 if command -v exa >/dev/null; then
     alias ls='exa -lah --icons'

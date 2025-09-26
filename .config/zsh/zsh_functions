@@ -173,26 +173,13 @@ pullpr () {
   done
 }
 
-### Docker
-
-# logging
-# tf () {
-#   local template='{{color .ContainerColor .ContainerName}} {{with $d := .Message | tryParseJSON}}{{msToRFC3339Nano $d.time}} [{{or (bunyanLevelColor $d.level) (levelColor $d.level)}}] {{or $d.message $d.msg}}{{if $d.data}}{{"\n"}}  data: {{$d.data}}{{end}}{{if $d.stack}}{{"\n"}}{{$d.stack}}{{end}}{{else}}{{.Message}}{{end}}{{"\n"}}'
-#   if [[ $# -eq 0 ]]; then
-#     local containers="$(docker ps --format '{{.Names}}' | fzf --multi --header "Select containers to tail logs" --border --preview 'docker inspect --format "{{json .}}" {} | jq -C')"
-#     echo "Selected containers: $containers"
-#     tailfin --template="$template" $containers
-#     echo "DONE containers: $containers"
-#
-#
-#   else
-#     tailfin --template="$template" "$@"
-#
-#   fi
-# }
 tf () {
   local template='{{color .ContainerColor .ContainerName}} {{with $d := .Message | tryParseJSON}}{{msToRFC3339Nano $d.time}} [{{or (bunyanLevelColor $d.level) (levelColor $d.level)}}] {{or $d.message $d.msg}}{{if $d.data}}{{"\n"}}  data: {{$d.data}}{{end}}{{if $d.stack}}{{"\n"}}{{$d.stack}}{{end}}{{else}}{{.Message}}{{end}}{{"\n"}}'
-  tailfin --template="$template" "$@"
+  if [ -z "$@" ]; then
+    tailfin --template="$template" auth-be user org
+  else
+    tailfin --template="$template" "$@"
+  fi
 }
 
 tectl () {
@@ -276,7 +263,10 @@ tectlenv() {
     for env_filename in "$@"; do
       local env_file="$TECTL_DIR/$env_filename"
       if [[ -f "$env_file" ]]; then
-        export $(grep -v '^#' "$env_file" | xargs -d '\n')
+        set -o allexport
+        source "$env_file" # Source the file directly
+        set +o allexport
+
         echo "Loaded environment variables from $env_file"
       else
         echo "File not found: $env_file"
