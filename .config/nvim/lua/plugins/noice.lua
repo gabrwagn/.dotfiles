@@ -1,6 +1,11 @@
 return {
   "folke/noice.nvim",
   opts = {
+    lsp = {
+      progress = {
+        enabled = false,
+      },
+    },
     views = {
       cmdline_popup = {
         border = {

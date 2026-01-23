@@ -16,7 +16,7 @@ map('n', '<C-i>', '<C-i>') -- Distinguish <Tab> from <C-i> in normal mode, allow
 
 map('n', '<leader>ch', '<cmd>ClangdSwitchSourceHeader<cr>', { desc = "Switch Source/Header" })
 
-map('n', '<leader>gd', function()
+map('n', '<leader>gx', function()
     if next(require('diffview.lib').views) == nil then
       vim.cmd('DiffviewOpen')
     else

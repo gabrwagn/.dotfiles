@@ -90,7 +90,7 @@
   "custom/bluetooth": {
     "exec": "~/.config/waybar/custom/bluetooth.sh",
     "return-type": "json",
-    "interval": 10,
+    "interval": 5,
     "on-click": "/home/gabwag/bin/rofi-bluetooth",
     "on-click-right": "~/.config/waybar/custom/actions/bluetooth-toggle.sh"
   },

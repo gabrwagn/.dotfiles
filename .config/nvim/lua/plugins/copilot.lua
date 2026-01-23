@@ -1,6 +1,9 @@
 return {
   "zbirenbaum/copilot.lua",
-  opts = {
+  enabled = false,
+  config = function()
+    require("copilot").setup {
+    copilot_model = "claude-sonnet-4.5",
     suggestion = {
       enabled = not vim.g.ai_cmp,
       auto_trigger = true,
@@ -16,5 +19,6 @@ return {
       markdown = true,
       help = true,
     },
-  },
+  }
+  end
 }
