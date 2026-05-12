@@ -33,12 +33,10 @@ if command -v exa >/dev/null; then
     alias ll='exa -lah --icons'
 fi
 
-# Override tmux to use custom config for opencode system theme support
-alias tmux='tmux -f ~/.dotfiles/.config/tmux/tmux.conf'
-
 alias oc="opencode --continue --port"
 
-alias gaming-on='sudo keyd bind "mouse1 = j" "mouse2 = j"'
-alias gaming-off='sudo keyd bind reset'
-
-alias fixbt='handle=$(hcitool con | grep -oP "handle \K[0-9]+"); sudo hcitool cmd 0x3f 0x57 $(printf 0x%02X $handle) 0x00 0x01'
+# Host-specific aliases
+if [[ "$(hostname)" == "mononoke" ]]; then
+    alias rt='tmux -L rt attach -t rt 2>/dev/null || echo "rtorrent session not running"'
+    alias arrctl='docker compose -f ~/.local/docker/arr/docker-compose.yml'
+fi

@@ -294,3 +294,37 @@ mvf() {
   mv "$@" && cd "${@: -1}"
 }
 
+setbg() {
+  local wallpaper_dir="$HOME/.local/share/wallpapers"
+  local bg="$HOME/.local/share/wallpapers/bg.png"
+
+  if [ ! -d "$wallpaper_dir" ]; then
+    echo "Error: Wallpaper directory not found: $wallpaper_dir"
+    return 1
+  fi
+
+  if ! command -v fzf &> /dev/null; then
+    echo "Error: fzf is not installed"
+    return 1
+  fi
+
+  local selected_image
+  selected_image=$(fd -e jpg -e jpeg -e png -e webp -e bmp . "$wallpaper_dir" \
+    | grep -v "/bg\.png$" \
+    | sort \
+    | fzf --preview 'echo "File: {}" && file {}' \
+        --preview-window=up:3:wrap \
+        --prompt="Select wallpaper: " \
+        --height=50% \
+        --border)
+
+  if [ -z "$selected_image" ]; then
+    echo "No wallpaper selected"
+    return 0
+  fi
+
+  ln -sf "$selected_image" "$bg"
+  echo "Wallpaper set to: $(basename "$selected_image")"
+  hyprctl hyprpaper reload ,"$selected_image"
+}
+

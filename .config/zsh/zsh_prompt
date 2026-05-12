@@ -6,5 +6,12 @@ zstyle ':vcs_info:git:*' formats ' %b'
 
 setopt PROMPT_SUBST
 NEWLINE=$'\n'
-PROMPT='%B%F{blue}󰉋 %(3~|../%2~|%~)%f %F{red}${vcs_info_msg_0_}${NEWLINE}%F{13}>%f%b '
+
+if [[ -n $SSH_CONNECTION ]]; then
+  SSH_INDICATOR='%F{yellow} [ssh %m] %f'
+else
+  SSH_INDICATOR=''
+fi
+
+PROMPT='%B%F{blue}󰉋 %(3~|../%2~|%~)%f %F{red}${vcs_info_msg_0_}${SSH_INDICATOR}${NEWLINE}%F{13}>%f%b '
 RPROMPT='%F{13}[%D{%H:%M:%S}]'

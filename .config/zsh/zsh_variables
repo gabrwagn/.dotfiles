@@ -9,8 +9,10 @@ export TERM=alacritty
 export TERMINAL=alacritty
 export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 
-# Jira
-export JIRA_URL="https://timeedit.atlassian.net"
-export JIRA_EMAIL="gabriel.wagner@timeedit.com"
-export JIRA_API_TOKEN="$(secret-tool lookup service jira key api-token)"
+# Host-specific
+if [[ "$(hostname)" == "nausicaa" ]]; then
+    export JIRA_URL="https://timeedit.atlassian.net"
+    export JIRA_EMAIL="gabriel.wagner@timeedit.com"
+    export JIRA_API_TOKEN="$(secret-tool lookup service jira key api-token)"
+fi
 
