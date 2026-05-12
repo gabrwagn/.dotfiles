@@ -16,6 +16,11 @@ map('n', '<C-i>', '<C-i>') -- Distinguish <Tab> from <C-i> in normal mode, allow
 
 map('n', '<leader>bb', require('fzf-lua').buffers, { desc = 'Select other buffer' })
 
+-- Clipboard
+map({ "n", "v" }, "<leader>y", "\"+y", { desc = "Yank to clipboard" })
+map({ "n", "v" }, "<leader>p", "\"+p", { desc = "Paste from clipboard" })
+map({ "n", "v" }, "<leader>P", "\"+P", { desc = "Paste above from clipboard" })
+
 map('n', '<leader>ch', '<cmd>ClangdSwitchSourceHeader<cr>', { desc = "Switch Source/Header" })
 
 map('n', '<leader>gx', function()
