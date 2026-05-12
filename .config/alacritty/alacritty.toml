@@ -27,8 +27,11 @@ style = "beam"
 thickness = 0.2
 unfocused_hollow = false
 
+[general]
+import = ["~/.config/alacritty/host.toml"]
+
 [font]
-size = 9
+size = 11.25 # default, overridden by host.toml if it exists
 
 [font.normal]
 family = "JetBrains Mono"
