@@ -14,6 +14,13 @@
   "hyprland/language": {
     "format": "{short}"
   },
+  "hyprland/workspaces": {
+    "show-special": true,
+    "format": "{icon}",
+    "format-icons": {
+      "special": "◈"
+    }
+  },
   "clock": {
     "format": " {:%H:%M}",
     "tooltip": "{:%A, %d %B %Y}",
@@ -105,7 +112,8 @@
     "on-click": "~/.config/waybar/custom/actions/calendar-open.sh"
   },
   "tray": {
-    "icon-size": 18
+    "icon-size": 18,
+    "spacing": 5
   },
   "custom/notification": {
     "tooltip": false,
