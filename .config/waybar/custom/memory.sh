@@ -40,8 +40,17 @@ repeat() {
 filled=$(repeat "$bar_char" "$num_filled")
 empty=$(repeat "$bar_char" $((total_bars - num_filled)))
 
+# Build tooltip with memory, cpu, and disk
+mem_total=$(free -h | awk '/Mem:/ {print $2}')
+cpu_percent=$(awk '/^cpu / {usage=100-($5/($2+$3+$4+$5+$6+$7+$8))*100; printf "%.0f", usage}' /proc/stat)
+disk_used=$(df -h / | awk 'NR==2 {print $3}')
+disk_total=$(df -h / | awk 'NR==2 {print $2}')
+disk_percent=$(df / | awk 'NR==2 {printf "%.0f", $3/$2*100}')
+
+tooltip="󰍛 Memory: ${usage_gb}/${mem_total} (${usage_percent}%)\n󰻠 CPU: ${cpu_percent}%\n󰋊 Disk: ${disk_used}/${disk_total} (${disk_percent}%)"
+
 json_output='{
-  "tooltip": "Memory usage: '"$usage_gb ($usage_percent%)"'",
+  "tooltip": "'"$tooltip"'",
   "text": "<span color=\"'$color'\">'$filled'</span><span color=\"'$empty_color'\">'$empty'</span>"
 }'
 

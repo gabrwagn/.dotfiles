@@ -77,6 +77,14 @@ button.focused {
   border-bottom: 1px solid #B66467;
 }
 
+#custom-bluetooth.yellow {
+  color: #D9A441;
+}
+
+#custom-bluetooth.red {
+  color: #B66467;
+}
+
 #custom-cava {
   padding: 2px;
   color: #BBB6B6;

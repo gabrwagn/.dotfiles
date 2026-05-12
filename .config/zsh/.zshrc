@@ -12,11 +12,7 @@ export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 export GPG_TTY=$(tty)
 export MOZ_ENABLE_WAYLAND=1
 
-if [ -z "$WAYLAND_DISPLAY" ] && [ -n "$XDG_VTNR" ] && [ "$XDG_VTNR" -eq 1 ] ; then
-    #exec sway
-    exec Hyprland
-fi
-
+eval "$(keychain -q --noask --eval id_rsa)"
 
 # pnpm
 export PNPM_HOME="/home/gabwag/.local/share/pnpm"

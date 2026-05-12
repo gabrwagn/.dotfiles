@@ -16,8 +16,8 @@ cat >"$config_file" <<EOF
 bars = 20
 
 [input]
-method = pulse
-source = auto
+method = alsa
+source = default
 
 [output]
 method = raw

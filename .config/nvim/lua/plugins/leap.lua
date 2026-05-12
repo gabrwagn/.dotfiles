@@ -1,5 +1,5 @@
 return {
-  "ggandor/leap.nvim",
+  url = "https://codeberg.org/andyg/leap.nvim",
   event = "VeryLazy",
   dependencies = {
       -- vim-repeat is needed to make dot-repeat work with the flit.nvim

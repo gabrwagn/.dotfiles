@@ -289,3 +289,8 @@ tectlenv() {
     echo "Usage: tectl-env {set|unset} file1.env [file2.env ...]"
   fi
 }
+
+mvf() {
+  mv "$@" && cd "${@: -1}"
+}
+

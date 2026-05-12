@@ -14,6 +14,8 @@ map("v", "<Tab>", ">gv")
 map("v", "<S-Tab>", "<gv")
 map('n', '<C-i>', '<C-i>') -- Distinguish <Tab> from <C-i> in normal mode, allowing jump in history despite <Tab> being remapped
 
+map('n', '<leader>bb', require('fzf-lua').buffers, { desc = 'Select other buffer' })
+
 map('n', '<leader>ch', '<cmd>ClangdSwitchSourceHeader<cr>', { desc = "Switch Source/Header" })
 
 map('n', '<leader>gx', function()
@@ -36,6 +38,7 @@ end, { desc = "Diagnostics (Troube=>fzf-lua)", silent = true })
 
 map("n", "glc", function() require("timber.actions").clear_log_statements({ global = false }) end, { desc = "Clear log statements in current buffer" })
 map("n", "gls", function() require("timber.actions").search_log_statements() end, { desc = "search_log_statements" })
+
 
 local wk = require("which-key")
 wk.add {

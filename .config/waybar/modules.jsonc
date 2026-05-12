@@ -128,7 +128,7 @@
     "escape": true
   },
   "custom/cava": {
-    "exec": "~/.config/hypr/scripts/waybar-cava.sh",
+    "exec": "~/.config/waybar/custom/cava.sh",
     "format": "{}"
   }
 }

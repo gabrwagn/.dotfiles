@@ -13,8 +13,10 @@ alias gb='git branch'            # Git commit shortcut
 alias gc='git commit'            # Git commit shortcut
 alias gp='git push'                 # Git push shortcut
 alias gpf='git push --force-with-lease'                 # Git push shortcut
-# alias gsw='git switch $(git branch | fzf --reverse)' # Git switch branch
+# switch branch interactively
 alias gsw='git branch -a | sed "s|remotes/[^/]*/||" | sort -u | fzf --reverse | xargs git switch'
+# delete local branches interactively
+alias gbp='git branch -vv | grep ": gone]" | awk "{print \$1}" | fzf --multi --header "Select branches to delete" | xargs -r git branch -D'
 alias gg='git lg'
 alias task='go-task'
 alias cl="clear"
@@ -30,3 +32,13 @@ if command -v exa >/dev/null; then
     alias ls='exa -lah --icons'
     alias ll='exa -lah --icons'
 fi
+
+# Override tmux to use custom config for opencode system theme support
+alias tmux='tmux -f ~/.dotfiles/.config/tmux/tmux.conf'
+
+alias oc="opencode --continue --port"
+
+alias gaming-on='sudo keyd bind "mouse1 = j" "mouse2 = j"'
+alias gaming-off='sudo keyd bind reset'
+
+alias fixbt='handle=$(hcitool con | grep -oP "handle \K[0-9]+"); sudo hcitool cmd 0x3f 0x57 $(printf 0x%02X $handle) 0x00 0x01'
