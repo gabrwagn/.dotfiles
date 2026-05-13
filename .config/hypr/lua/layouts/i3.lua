@@ -34,7 +34,7 @@ end
 local function get_ws(ctx)
     local key = ws_key(ctx)
     if not workspaces[key] then
-        workspaces[key] = { root = nil, boxes = {} }
+        workspaces[key] = { root = nil, boxes = {}, leaves = {} }
     end
     return workspaces[key]
 end
@@ -86,16 +86,8 @@ end
 -- Tree helpers            --
 -----------------------------
 
-local function find_leaf(node, id)
-    if not node then return nil end
-    if node.type == "leaf" then
-        return node.id == id and node or nil
-    end
-    for _, c in ipairs(node.children) do
-        local found = find_leaf(c, id)
-        if found then return found end
-    end
-    return nil
+local function find_leaf(ws, id)
+    return ws.leaves[id]
 end
 
 local function collect_ids(node, out)
@@ -131,15 +123,6 @@ local function last_leaf(node)
     return last_leaf(node.children[#node.children])
 end
 
---- Get the effective ratios for a container (equal if nil).
-local function get_ratios(container)
-    if container.ratios then return container.ratios end
-    local n = #container.children
-    local r = {}
-    for i = 1, n do r[i] = 1.0 / n end
-    return r
-end
-
 --- Replace a child in a container, updating parent pointer.
 local function replace_child(parent, old, new)
     local idx = child_index(parent, old)
@@ -155,9 +138,14 @@ end
 
 --- Remove a leaf from the tree. Collapses parent if only 1 child remains.
 --- Returns new root.
-local function remove_leaf(root, leaf)
+local function remove_leaf(ws, root, leaf)
     local p = leaf.parent
-    if not p then return nil end  -- leaf was root
+    if not p then
+        ws.leaves[leaf.id] = nil
+        return nil  -- leaf was root
+    end
+
+    ws.leaves[leaf.id] = nil
 
     local idx = child_index(p, leaf)
     table.remove(p.children, idx)
@@ -192,7 +180,10 @@ end
 --- If ref_node's parent is the same axis as dir, flatten into the children list.
 --- Otherwise, wrap ref_node and new_node in a new container.
 --- Returns new root.
-local function insert_beside(root, ref_node, new_node, dir, before)
+local function insert_beside(ws, root, ref_node, new_node, dir, before)
+    if new_node.type == "leaf" then
+        ws.leaves[new_node.id] = new_node
+    end
     local p = ref_node.parent
 
     -- If parent exists and is the same axis, flatten
@@ -224,8 +215,10 @@ local function insert_beside(root, ref_node, new_node, dir, before)
     return root
 end
 
-local function swap_leaves(a, b)
+local function swap_leaves(ws, a, b)
     a.id, b.id = b.id, a.id
+    ws.leaves[a.id] = a
+    ws.leaves[b.id] = b
 end
 
 -----------------------------
@@ -248,9 +241,9 @@ local function sync_tree(ctx, ws)
     if ws.root then
         for _, id in ipairs(collect_ids(ws.root)) do
             if not present[id] then
-                local leaf = find_leaf(ws.root, id)
+                local leaf = find_leaf(ws, id)
                 if leaf then
-                    ws.root = remove_leaf(ws.root, leaf)
+                    ws.root = remove_leaf(ws, ws.root, leaf)
                 end
                 ws.boxes[id] = nil
             end
@@ -263,8 +256,9 @@ local function sync_tree(ctx, ws)
 
         if not ws.root then
             ws.root = make_leaf(id)
-        elseif not find_leaf(ws.root, id) then
-            local ref = focused and find_leaf(ws.root, focused)
+            ws.leaves[id] = ws.root
+        elseif not find_leaf(ws, id) then
+            local ref = focused and find_leaf(ws, focused)
             if not ref then
                 ref = last_leaf(ws.root)
             end
@@ -280,7 +274,7 @@ local function sync_tree(ctx, ws)
             end
             next_split = nil
 
-            ws.root = insert_beside(ws.root, ref, make_leaf(id), dir)
+            ws.root = insert_beside(ws, ws.root, ref, make_leaf(id), dir)
         end
     end
 
@@ -303,12 +297,13 @@ local function place_tree(ctx, node, area, targets, ws)
         return
     end
 
-    local ratios = get_ratios(node)
+    local ratios = node.ratios
+    local n = #node.children
     local pos = node.dir == "h" and area.x or area.y
     local total = node.dir == "h" and area.w or area.h
 
     for i, child in ipairs(node.children) do
-        local size = total * ratios[i]
+        local size = ratios and (total * ratios[i]) or (total / n)
         local child_area
         if node.dir == "h" then
             child_area = { x = pos, y = area.y, w = size, h = area.h }
@@ -376,7 +371,7 @@ end
 ---   3. Reached root → no-op if already at outermost edge; else detach
 ---      and prepend/append to root (or wrap if root is cross-axis).
 local function move_window_dir(ws, from_id, direction)
-    local from_leaf = find_leaf(ws.root, from_id)
+    local from_leaf = find_leaf(ws, from_id)
     if not from_leaf then return end
 
     local move_axis = (direction == "left" or direction == "right") and "h" or "v"
@@ -417,9 +412,10 @@ local function move_window_dir(ws, from_id, direction)
 
                 -- Node is an ancestor of from_leaf. Detach from_leaf and
                 -- insert into the target sibling or beside it.
-                ws.root = remove_leaf(ws.root, from_leaf)
+                ws.root = remove_leaf(ws, ws.root, from_leaf)
                 if not ws.root then
                     ws.root = make_leaf(from_id)
+                    ws.leaves[from_id] = ws.root
                     return
                 end
 
@@ -427,7 +423,7 @@ local function move_window_dir(ws, from_id, direction)
                 local new_leaf = make_leaf(from_id)
                 local target_leaf
                 if target_node.type == "leaf" then
-                    target_leaf = find_leaf(ws.root, target_node.id)
+                    target_leaf = find_leaf(ws, target_node.id)
                 else
                     -- Descend into sibling from the near side
                     local desc = target_node
@@ -438,7 +434,7 @@ local function move_window_dir(ws, from_id, direction)
                             desc = desc.children[1]
                         end
                     end
-                    target_leaf = find_leaf(ws.root, desc.id)
+                    target_leaf = find_leaf(ws, desc.id)
                 end
                 if not target_leaf then return end
 
@@ -451,6 +447,7 @@ local function move_window_dir(ws, from_id, direction)
                     else
                         container = make_container(cross_axis, { target_leaf, new_leaf })
                     end
+                    ws.leaves[new_leaf.id] = new_leaf
                     if not tp then
                         ws.root = container
                     else
@@ -459,7 +456,7 @@ local function move_window_dir(ws, from_id, direction)
                     end
                 else
                     -- No cross-axis context: insert beside target along move axis
-                    ws.root = insert_beside(ws.root, target_leaf, new_leaf, move_axis, not forward)
+                    ws.root = insert_beside(ws, ws.root, target_leaf, new_leaf, move_axis, not forward)
                 end
                 return
             end
@@ -479,13 +476,15 @@ local function move_window_dir(ws, from_id, direction)
     if edge and edge.type == "leaf" and edge.id == from_id then return end
 
     -- Detach and place at outer edge
-    ws.root = remove_leaf(ws.root, from_leaf)
+    ws.root = remove_leaf(ws, ws.root, from_leaf)
     if not ws.root then
         ws.root = make_leaf(from_id)
+        ws.leaves[from_id] = ws.root
         return
     end
 
     local new_leaf = make_leaf(from_id)
+    ws.leaves[from_id] = new_leaf
     if ws.root.type == "container" and ws.root.dir == move_axis then
         -- Flatten into root
         if forward then
@@ -514,7 +513,7 @@ end
 --- Find the nearest ancestor container matching the axis and adjust ratios
 --- between the child and its neighbor.
 local function resize_in_dir(ws, active, direction, amount)
-    local leaf = find_leaf(ws.root, active)
+    local leaf = find_leaf(ws, active)
     if not leaf then return end
 
     local axis = (direction == "left" or direction == "right") and "h" or "v"
@@ -601,6 +600,7 @@ hl.layout.register("i3", {
         if #ctx.targets == 0 then
             ws.root = nil
             ws.boxes = {}
+            ws.leaves = {}
             return
         end
 
@@ -632,9 +632,9 @@ hl.layout.register("i3", {
             if focused and ws.root then
                 local neighbor = find_neighbor(ws, focused, arg)
                 if neighbor then
-                    local a = find_leaf(ws.root, focused)
-                    local b = find_leaf(ws.root, neighbor)
-                    if a and b then swap_leaves(a, b) end
+                    local a = find_leaf(ws, focused)
+                    local b = find_leaf(ws, neighbor)
+                    if a and b then swap_leaves(ws, a, b) end
                 end
             end
 
@@ -648,10 +648,10 @@ hl.layout.register("i3", {
 
         elseif command == "promote" then
             if focused and ws.root then
-                local leaf = find_leaf(ws.root, focused)
+                local leaf = find_leaf(ws, focused)
                 local fst = first_leaf(ws.root)
                 if leaf and fst and leaf ~= fst then
-                    swap_leaves(leaf, fst)
+                    swap_leaves(ws, leaf, fst)
                 end
             end
 
