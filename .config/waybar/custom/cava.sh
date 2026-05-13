@@ -16,7 +16,7 @@ cat >"$config_file" <<EOF
 bars = 20
 
 [input]
-method = alsa
+method = pulse
 source = default
 
 [output]
