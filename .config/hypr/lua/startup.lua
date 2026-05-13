@@ -1,6 +1,6 @@
 -- Autostart applications (runs once on startup)
 
-local host = require("hyprland.host")
+local host = require("lua.host")
 
 hl.on("hyprland.start", function()
     hl.exec_cmd("uwsm app -- swaync")

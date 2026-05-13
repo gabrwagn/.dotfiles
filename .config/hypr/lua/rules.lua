@@ -1,6 +1,6 @@
 -- Window and layer rules
 
-local theme = require("hyprland.theme")
+local theme = require("lua.theme")
 
 -- Ignore maximize requests from apps
 hl.window_rule({

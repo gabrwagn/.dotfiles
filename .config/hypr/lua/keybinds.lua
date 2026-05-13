@@ -1,7 +1,7 @@
 -- Keybindings
 
 local mainMod = "SUPER"
-local host    = require("hyprland.host")
+local host    = require("lua.host")
 
 local browser  = host.is_laptop and "helium" or "firefox"
 
@@ -16,7 +16,6 @@ hl.bind(mainMod .. " + Space", hl.dsp.exec_cmd("uwsm app -- rofi -show drun -the
 
 -- Window management
 hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
-hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("~/.config/hypr/scripts/restart.sh"))
 hl.bind(mainMod .. " + B", hl.dsp.layout("splitratio exact 0.5"))
 
 -- Lock screen

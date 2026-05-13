@@ -1,6 +1,6 @@
 -- Monitor configuration
 
-local host = require("hyprland.host")
+local host = require("lua.host")
 
 if host.is_laptop then
     -- Laptop screen

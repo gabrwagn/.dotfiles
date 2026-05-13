@@ -1,8 +1,8 @@
 -- Theme configuration
 -- Swap the palette require to change color scheme
 
-local colors = require("hyprland.palette.paradise")
-local host   = require("hyprland.host")
+local colors = require("lua.palette.paradise")
+local host   = require("lua.host")
 
 local theme = {}
 

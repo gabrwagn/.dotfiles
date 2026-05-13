@@ -1,15 +1,15 @@
 -- Hyprland Lua Configuration
 -- Main config: sources other files via require()
 
-local theme = require("hyprland.theme")
-local host  = require("hyprland.host")
+local theme = require("lua.theme")
+local host  = require("lua.host")
 
-require("hyprland.monitors")
-require("hyprland.vars")
-require("hyprland.startup")
-require("hyprland.layouts.i3")
-require("hyprland.keybinds")
-require("hyprland.rules")
+require("lua.monitors")
+require("lua.vars")
+require("lua.startup")
+require("lua.layouts.i3")
+require("lua.keybinds")
+require("lua.rules")
 
 
 ---------------
