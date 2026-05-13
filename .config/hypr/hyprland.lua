@@ -7,6 +7,7 @@ local host  = require("hyprland.host")
 require("hyprland.monitors")
 require("hyprland.vars")
 require("hyprland.startup")
+require("hyprland.layouts.i3")
 require("hyprland.keybinds")
 require("hyprland.rules")
 
@@ -50,7 +51,7 @@ hl.config({
             inactive_border = theme.inactive_border,
         },
         allow_tearing = false,
-        layout        = "dwindle",
+        layout        = "lua:i3",
     },
 
     decoration = {

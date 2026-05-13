@@ -51,31 +51,44 @@ hl.bind(mainMod .. " + j",     hl.dsp.focus({ direction = "down" }))
 hl.bind(mainMod .. " + tab",         hl.dsp.window.cycle_next({ next = true }))
 hl.bind(mainMod .. " + SHIFT + tab", hl.dsp.window.cycle_next({ next = false }))
 
--- Move windows
-hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.window.move({ direction = "left" }))
-hl.bind(mainMod .. " + SHIFT + right", hl.dsp.window.move({ direction = "right" }))
-hl.bind(mainMod .. " + SHIFT + up",    hl.dsp.window.move({ direction = "up" }))
-hl.bind(mainMod .. " + SHIFT + down",  hl.dsp.window.move({ direction = "down" }))
-hl.bind(mainMod .. " + SHIFT + h",     hl.dsp.window.move({ direction = "left" }))
-hl.bind(mainMod .. " + SHIFT + l",     hl.dsp.window.move({ direction = "right" }))
-hl.bind(mainMod .. " + SHIFT + k",     hl.dsp.window.move({ direction = "up" }))
-hl.bind(mainMod .. " + SHIFT + j",     hl.dsp.window.move({ direction = "down" }))
+-- Move windows (via layoutmsg for tree-aware moves on lua:i3, harmless no-op on dwindle)
+hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.layout("move left"))
+hl.bind(mainMod .. " + SHIFT + right", hl.dsp.layout("move right"))
+hl.bind(mainMod .. " + SHIFT + up",    hl.dsp.layout("move up"))
+hl.bind(mainMod .. " + SHIFT + down",  hl.dsp.layout("move down"))
+hl.bind(mainMod .. " + SHIFT + h",     hl.dsp.layout("move left"))
+hl.bind(mainMod .. " + SHIFT + l",     hl.dsp.layout("move right"))
+hl.bind(mainMod .. " + SHIFT + k",     hl.dsp.layout("move up"))
+hl.bind(mainMod .. " + SHIFT + j",     hl.dsp.layout("move down"))
+
+-- Split direction control (i3 layout)
+hl.bind(mainMod .. " + v", hl.dsp.layout("splitv"))
+hl.bind(mainMod .. " + g", hl.dsp.layout("splith"))
+hl.bind(mainMod .. " + t", hl.dsp.layout("splittoggle"))
+
+-- Layout switching
+hl.bind(mainMod .. " + SHIFT + d", hl.dsp.exec_cmd("hyprctl keyword general:layout dwindle"))
+hl.bind(mainMod .. " + SHIFT + i", hl.dsp.exec_cmd("hyprctl keyword general:layout lua:i3"))
 
 -- Mouse binds (draggable windows with SUPER + mouse)
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Enter locked submap (SUPER+SHIFT+L)
-hl.bind(mainMod .. " + SHIFT + L", hl.dsp.submap("locked"))
+-- hl.bind(mainMod .. " + SHIFT + L", hl.dsp.submap("locked"))
 
 -- Resize submap
 hl.bind(mainMod .. " + R", hl.dsp.submap("resize"))
 
 hl.define_submap("resize", function()
-    hl.bind("right",  hl.dsp.window.resize({ x = 10,  y = 0,   relative = true }), { repeating = true })
-    hl.bind("left",   hl.dsp.window.resize({ x = -10, y = 0,   relative = true }), { repeating = true })
-    hl.bind("up",     hl.dsp.window.resize({ x = 0,   y = -10, relative = true }), { repeating = true })
-    hl.bind("down",   hl.dsp.window.resize({ x = 0,   y = 10,  relative = true }), { repeating = true })
+    hl.bind("right",  hl.dsp.layout("resize right 0.05"), { repeating = true })
+    hl.bind("left",   hl.dsp.layout("resize left 0.05"),  { repeating = true })
+    hl.bind("up",     hl.dsp.layout("resize up 0.05"),    { repeating = true })
+    hl.bind("down",   hl.dsp.layout("resize down 0.05"),  { repeating = true })
+    hl.bind("l",      hl.dsp.layout("resize right 0.05"), { repeating = true })
+    hl.bind("h",      hl.dsp.layout("resize left 0.05"),  { repeating = true })
+    hl.bind("k",      hl.dsp.layout("resize up 0.05"),    { repeating = true })
+    hl.bind("j",      hl.dsp.layout("resize down 0.05"),  { repeating = true })
     hl.bind("escape", hl.dsp.submap("reset"))
     hl.bind("Return", hl.dsp.submap("reset"))
 end)
@@ -100,4 +113,3 @@ for i = 1, 10 do
     hl.bind(mainMod .. " + " .. key,         hl.dsp.focus({ workspace = i }))
     hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
 end
-
