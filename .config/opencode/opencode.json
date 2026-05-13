@@ -34,6 +34,7 @@
     "external_directory": {
       "~/docs/**": "allow",
       "~/docs": "allow",
+      "/tmp/opencode": "allow",
       "~/.local/share/opencode/tool-output/**": "allow"
     }
   }
