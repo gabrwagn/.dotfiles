@@ -2,7 +2,6 @@
 -- Main config: sources other files via require()
 
 local theme = require("lua.theme")
-local host  = require("lua.host")
 
 require("lua.monitors")
 require("lua.vars")
