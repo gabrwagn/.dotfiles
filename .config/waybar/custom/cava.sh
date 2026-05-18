@@ -17,7 +17,7 @@ bars = 20
 
 [input]
 method = pulse
-source = default
+source = alsa_output.platform-sound.HiFi__Headphones__sink.monitor
 
 [output]
 method = raw
