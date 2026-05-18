@@ -1,3 +1,5 @@
 #!/bin/sh
 DOTFILES="$(dirname "$(realpath "$0")")"
-git -C "$DOTFILES" pull && stow --restow --dir="$DOTFILES" --target="$HOME" .
+git -C "$DOTFILES" pull || exit 1
+echo "Restowing dotfiles..."
+stow --restow --dir="$DOTFILES" --target="$HOME" .
