@@ -19,7 +19,7 @@ hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
 hl.bind(mainMod .. " + B", hl.dsp.layout("splitratio exact 0.5"))
 
 -- Lock screen
-hl.bind("ALT + l", hl.dsp.exec_cmd("uwsm app -- /home/gabwag/.local/bin/hyprlock-blur"))
+hl.bind("ALT + l", hl.dsp.exec_cmd("uwsm app -- ~/.config/hypr/scripts/lock"))
 
 -- Notification panel
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t"))
@@ -94,6 +94,9 @@ end)
 
 -- System menu with rofi
 hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("uwsm app -- rofi -show power-menu -theme ~/.config/rofi/paradise.rasi -modi power-menu:~/.config/rofi/rofi-power-menu"))
+if host.is_laptop then
+    hl.bind("XF86PowerOff", hl.dsp.exec_cmd("uwsm app -- rofi -show power-menu -theme ~/.config/rofi/paradise.rasi -modi power-menu:~/.config/rofi/rofi-power-menu"))
+end
 
 -- Fullscreen
 hl.bind(mainMod .. " + F",         hl.dsp.window.fullscreen({ mode = "maximized" }))
