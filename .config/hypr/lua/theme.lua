@@ -18,14 +18,14 @@ theme.fullscreen_border_size   = 3
 theme.shadow_color = colors.shadow
 
 -- Gaps and borders
-theme.gaps_in     = 4
-theme.gaps_out    = host.is_laptop and 8 or 12
+theme.gaps_in     = 2
+theme.gaps_out    = host.is_laptop and 4 or 12
 theme.border_size = 2
 theme.rounding    = 0
 
 -- Opacity
 theme.active_opacity   = 1.0
-theme.inactive_opacity = 1.0
+theme.inactive_opacity = 0.99
 theme.zathura_opacity  = 0.85
 
 return theme

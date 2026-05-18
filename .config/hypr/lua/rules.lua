@@ -25,11 +25,12 @@ hl.window_rule({
 hl.layer_rule({
     match = { namespace = "rofi" },
     blur  = true,
+  ignore_alpha = 0.3,
 })
-hl.layer_rule({
-    match = { namespace = "waybar" },
-    blur  = true,
-})
+-- hl.layer_rule({
+--     match = { namespace = "waybar" },
+--     blur  = true,
+-- })
 hl.layer_rule({
     match        = { namespace = "swaync-control-center" },
     blur         = true,
@@ -86,6 +87,14 @@ hl.window_rule({
     match          = { class = "^(safeeyes)$" },
     float          = true,
     suppress_event = "fullscreen",
+})
+
+-- Terminal file chooser
+hl.window_rule({
+    match = { class = "^(Alacritty)$", title = "^(termfilechooser)$" },
+    float = true,
+    size  = "800 600",
+    center = true,
 })
 
 -- Picture-in-Picture
