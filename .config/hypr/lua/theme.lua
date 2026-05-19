@@ -11,7 +11,7 @@ theme.active_border   = colors.red
 theme.inactive_border = colors.bg3
 
 -- Fullscreen border gradient
-theme.fullscreen_border_colors = { colors.yellow, colors.blue }
+theme.fullscreen_border_colors = { colors.yellow, colors.yellow }
 theme.fullscreen_border_size   = 3
 
 -- Shadow

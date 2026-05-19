@@ -67,14 +67,6 @@ hl.window_rule({
     idle_inhibit = "always",
 })
 
--- Project Epoch (WoW 3.3.5 - XWayland)
--- 'immediate' bypasses compositor rendering - fixes black screen after Mesa upgrades
-hl.window_rule({
-    match        = { initial_class = "^(steam_app_default)$", initial_title = "^(World of Warcraft)$" },
-    immediate    = true,
-    fullscreen   = 1,
-    idle_inhibit = "always",
-})
 
 -- Zathura PDF viewer
 hl.window_rule({
