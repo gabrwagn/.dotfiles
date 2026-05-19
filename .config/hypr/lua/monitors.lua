@@ -13,3 +13,6 @@ end
 
 -- Fallback for any other monitor
 hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
+
+-- Bigger gaps on external monitors
+hl.workspace_rule({ workspace = "m[HDMI-A-1]", gaps_out = 12 })
