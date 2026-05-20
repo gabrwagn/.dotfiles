@@ -1,19 +1,33 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "permission": {
+    // NOTE: rule order matters — opencode uses findLast, so later rules
+    // override earlier ones. Put broad rules first, narrow exceptions last.
+    //
+    // "read" patterns are matched against path RELATIVE to the worktree
+    // (so reads inside the workspace look like "src/foo.ts", not absolute).
+    // External reads are gated separately by "external_directory" using
+    // absolute (expanded) paths.
+
     "read": {
-      "*": "ask",
-      "~/docs/**": "allow",
-      "*.env": "deny",
-      "*.env.*": "deny",
-      "*.env.example": "allow"
+      "*": "allow",
+      "**/*.env": "deny",
+      "**/*.env.*": "deny",
+      "**/*.env.example": "allow",
+      ".env": "deny",
+      ".env.*": "deny",
+      ".env.example": "allow"
     },
     "edit": {
       "*": "ask",
-      "*.env": "deny",
+      "**/*.env": "deny",
+      "**/*.env.*": "deny",
+      "**/*.env.example": "ask",
+      ".env": "deny",
+      ".env.*": "deny",
+      ".env.example": "ask"
     },
     "bash": {
-      "rm *": "deny",
       "git *": "allow",
       "git checkout *": "deny",
       "git rebase *": "deny",
@@ -24,18 +38,22 @@
       "git restore *": "ask",
       "git switch *": "ask",
       "git reset *": "deny",
-      "git push *": "deny",
+      "git push *": "ask",
       "git commit *": "ask",
+      "rm *": "deny",
       "rmdir *": "deny",
       "mv *": "ask",
       "chmod *": "deny",
       "chown *": "deny"
     },
     "external_directory": {
-      "~/docs/**": "allow",
+      "*": "ask",
       "~/docs": "allow",
+      "~/docs/**": "allow",
       "/tmp/opencode": "allow",
-      "~/.local/share/opencode/tool-output/**": "allow"
+      "/tmp/opencode/**": "allow",
+      "~/.local/share/opencode/**": "allow"
     }
   }
 }
+
