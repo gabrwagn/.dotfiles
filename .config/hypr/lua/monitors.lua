@@ -7,6 +7,20 @@ if host.is_laptop then
     hl.monitor({ output = "eDP-1", mode = "preferred", position = "0x0", scale = 2.0 })
     -- External monitor (HDMI) — positioned centered above laptop
     hl.monitor({ output = "HDMI-A-1", mode = "preferred", position = "-684x-1620", scale = 1.333333 })
+
+    -- Disable laptop screen when external monitor is connected
+    hl.on("monitor.added", function(monitor)
+        if monitor and monitor.name == "HDMI-A-1" then
+            hl.monitor({ output = "eDP-1", disabled = true })
+        end
+    end)
+
+    -- Re-enable laptop screen when external monitor is disconnected
+    hl.on("monitor.removed", function(monitor)
+        if monitor and monitor.name == "HDMI-A-1" then
+            hl.monitor({ output = "eDP-1", mode = "preferred", position = "0x0", scale = 2.0 })
+        end
+    end)
 elseif host.is_desktop then
     hl.monitor({ output = "HDMI-A-2", mode = "preferred", position = "0x0", scale = "auto" })
 end
