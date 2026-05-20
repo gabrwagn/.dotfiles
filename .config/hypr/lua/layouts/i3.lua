@@ -590,6 +590,16 @@ local function equalize_tree(node)
 end
 
 -----------------------------
+-- Focus new windows       --
+-----------------------------
+
+hl.on("window.open", function(window)
+    if window then
+        hl.dispatch(hl.dsp.focus({ window = "address:" .. window.address }))
+    end
+end)
+
+-----------------------------
 -- Register layout         --
 -----------------------------
 
