@@ -5,10 +5,11 @@ local theme = require("lua.theme")
 
 require("lua.monitors")
 require("lua.vars")
-require("lua.startup")
 require("lua.layouts.i3")
 require("lua.keybinds")
 require("lua.rules")
+require("lua.gestures")
+require("lua.startup")
 
 
 ---------------
