@@ -1,7 +1,13 @@
 #!/bin/bash
 
-capacity=$(cat /sys/class/power_supply/macsmc-battery/capacity)
-status=$(cat /sys/class/power_supply/macsmc-battery/status)
+bat=/sys/class/power_supply/macsmc-battery
+if [[ ! -d "$bat" ]]; then
+  echo "{}"
+  exit 0
+fi
+
+capacity=$(cat "$bat/capacity")
+status=$(cat "$bat/status")
 
 class=""
 if [[ "$status" == "Charging" ]]; then
