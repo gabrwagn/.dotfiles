@@ -21,6 +21,9 @@ hl.window_rule({
     no_focus = true,
 })
 
+-- Bigger gaps on external monitors
+hl.workspace_rule({ workspace = "m[HDMI-A-1]", gaps_out = 12 })
+
 -- Layer rules
 hl.layer_rule({
     match = { namespace = "rofi" },
