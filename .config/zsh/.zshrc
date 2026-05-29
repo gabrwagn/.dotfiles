@@ -8,11 +8,13 @@ source ~/.config/zsh/zsh_keybinds
 source ~/.config/zsh/zsh_options
 source ~/.config/zsh/zsh_variables
 
-export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+export SSH_ASKPASS_REQUIRE=never   # don't fall back to gnome-ssh-askpass; use gpg-agent (rofi) only
+unset SSH_ASKPASS                  # belt-and-braces; /etc/profile.d sets this system-wide
 export GPG_TTY=$(tty)
 export MOZ_ENABLE_WAYLAND=1
 
-eval "$(keychain -q --noask --eval id_rsa)"
+# (keychain removed — gpg-agent now manages SSH keys; see ~/.gnupg/gpg-agent.conf)
 
 # pnpm
 export PNPM_HOME="/home/gabwag/.local/share/pnpm"

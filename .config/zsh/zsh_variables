@@ -7,7 +7,7 @@ export PATH="$PATH:/home/gabwag/.pulumi/bin"
 # Set default term
 export TERM=alacritty
 export TERMINAL=alacritty
-export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
 
 # Host-specific
 if [[ "$(hostname)" == "nausicaa" ]]; then
