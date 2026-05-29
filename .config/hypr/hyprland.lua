@@ -62,14 +62,14 @@ hl.config({
         inactive_opacity = theme.inactive_opacity,
 
         shadow = {
-            enabled      = true,
+            enabled      = false,
             range        = 4,
             render_power = 3,
             color        = theme.shadow_color,
         },
 
         blur = {
-            enabled  = true,
+            enabled  = false,
             size     = 3,
             passes   = 1,
             vibrancy = 0.1696,
@@ -140,3 +140,5 @@ hl.config({
         key_press_enables_dpms   = true,
     },
 })
+
+hl.notification.create({ text = "Config reloaded", duration = 3000 })
