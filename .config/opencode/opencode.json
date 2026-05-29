@@ -1,14 +1,14 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "plugin": ["opencode-browser"],
+  "mcp": {
+    "browsermcp": {
+      "type": "local",
+      "command": ["npx", "-y", "@browsermcp/mcp@0.1.3"],
+      "enabled": true
+    }
+  },
   "permission": {
-    // NOTE: rule order matters — opencode uses findLast, so later rules
-    // override earlier ones. Put broad rules first, narrow exceptions last.
-    //
-    // "read" patterns are matched against path RELATIVE to the worktree
-    // (so reads inside the workspace look like "src/foo.ts", not absolute).
-    // External reads are gated separately by "external_directory" using
-    // absolute (expanded) paths.
-
     "read": {
       "*": "allow",
       "**/*.env": "deny",
