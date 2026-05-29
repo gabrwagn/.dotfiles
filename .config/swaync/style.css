@@ -71,7 +71,7 @@ slider {
 .floating-notifications.background .notification-row .notification-background .notification .notification-content {
   border-radius: 0px;
   border-width: 1px;
-  margin: 7px;
+  margin: 3px 6px;
 }
 
 .floating-notifications.background .notification-row .notification-background .notification .notification-content .summary {
@@ -84,10 +84,11 @@ slider {
 
 .floating-notifications.background .notification-row .notification-background .notification .notification-content .body {
   color: @text;
+  max-height: 8em;
 }
 
 .floating-notifications.background .notification-row .notification-background .notification>*:last-child>* {
-  min-height: 3.4em;
+  min-height: 0;
 }
 
 .floating-notifications.background .notification-row .notification-background .notification>*:last-child>* .notification-action {
@@ -116,7 +117,7 @@ slider {
 }
 
 .floating-notifications.background .notification-row .notification-background .close-button {
-  margin: 7px;
+  margin: 3px;
   padding: 2px;
   border-radius: 0px;
   color: @text;
