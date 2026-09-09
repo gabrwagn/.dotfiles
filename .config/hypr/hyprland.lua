@@ -69,9 +69,13 @@ hl.config({
         },
 
         blur = {
-            enabled  = false,
+            -- Windows are opaque, so this pass only ever renders behind
+            -- noctalia's translucent layer surfaces (see rules.lua). Without
+            -- it enabled globally, layer rules cannot blur at all and the
+            -- glass panels turn into unreadable see-through cards.
+            enabled  = true,
             size     = 3,
-            passes   = 1,
+            passes   = 2,
             vibrancy = 0.1696,
         },
     },
@@ -142,3 +146,4 @@ hl.config({
 })
 
 hl.notification.create({ text = "Config reloaded", duration = 3000 })
+
