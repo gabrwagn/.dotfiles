@@ -9,11 +9,11 @@ enabled = ["k4n4t4/hypr-submap"]
 
 [bar.default]
 position             = "top"
-thickness            = 34
-background_opacity   = 0.8
+thickness            = 30
+background_opacity   = 0.5
 radius               = 0
-radius_bottom_left   = 34
-radius_bottom_right  = 34
+radius_bottom_left   = 6
+radius_bottom_right  = 6
 concave_edge_corners = false
 margin_ends          = 12
 margin_edge          = 0
@@ -23,9 +23,12 @@ padding              = 12
 widget_spacing       = 16
 font_family          = "JetBrains Mono NL Medium"
 font_weight          = 300
-capsule              = false
-capsule_fill         = "error"
-shadow               = true
+capsule              = true
+capsule_fill         = "on_primary"
+capsule_opacity      = 0.5
+capsule_padding      = 8.0
+capsule_thickness    = 1.0
+shadow               = false
 reserve_space        = true
 scale                = 1.15
 
@@ -54,6 +57,10 @@ focused_output_only = true
 hide_when_empty     = true
 show_icons          = false
 show_labels         = false
+
+[widget.audio_visualizer]
+bands = 15
+width = 123
 
 # Only visible while a submap is active, like waybar's hyprland/submap.
 [widget.submap]
