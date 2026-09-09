@@ -26,6 +26,9 @@ password_style      = "default"
 input_borders       = false
 card_borders        = false
 popup_borders       = false
+# Register noctalia as the session's polkit agent; nothing else provides one
+# here, so without it pkexec prompts have nowhere to render.
+polkit_agent        = true
 
 [shell.shadow]
 alpha = 0.55
