@@ -6,3 +6,22 @@
 mode           = "dark"
 source         = "custom"
 custom_palette = "Paradise"
+
+[wallpaper]
+directory = "~/.local/share/wallpapers"
+fill_mode = "crop"
+
+[wallpaper.default]
+path = "~/.local/share/wallpapers/bg.png"
+
+# Auto-detection does not associate the Apple panel backlight with eDP-1,
+# and the HDMI TV speaks no DDC/CI, so both are pinned explicitly.
+[brightness]
+enable_ddcutil = false
+
+[brightness.monitor.eDP-1]
+backend          = "backlight"
+backlight_device = "apple-panel-bl"
+
+[brightness.monitor.HDMI-A-1]
+backend = "none"
