@@ -7,6 +7,16 @@ mode           = "dark"
 source         = "custom"
 custom_palette = "Paradise"
 
+# Both catalogs are off. With them enabled and no ids selected, noctalia's
+# "undo templates you did not select" pass rewrote configs it does not own:
+# on 2026-09-09 it stripped `import = [...]` and the `[font]` header out of
+# alacritty.toml, and appended to hyprland.lua. Everything under ~/.config is
+# a stow symlink into this repo, so those edits land straight in git.
+# Do not enable without pointing template outputs somewhere unmanaged.
+[theme.templates]
+enable_builtin_templates   = false
+enable_community_templates = false
+
 # Approximate the old rofi/waybar look: square corners, monospace, no shadows
 # (shadows and blur were turned off compositor-side too).
 [shell]
