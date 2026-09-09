@@ -27,8 +27,8 @@ hl.bind(mainMod .. " + B", hl.dsp.layout("splitratio exact 0.5"))
 -- Lock screen
 hl.bind("ALT + l", hl.dsp.exec_cmd("uwsm app -- ~/.config/hypr/scripts/lock"))
 
--- Notification panel
-hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t"))
+-- Notification history
+hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(ipc .. "panel-toggle control-center notifications"))
 
 -- Fullscreen screenshot (save to ~/Pictures + copy to clipboard)
 hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("mkdir -p ~/Pictures/Screenshots && grim ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png && grim - | wl-copy"))

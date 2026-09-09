@@ -7,6 +7,30 @@ mode           = "dark"
 source         = "custom"
 custom_palette = "Paradise"
 
+# Approximate the old rofi/waybar look: square corners, monospace, no shadows
+# (shadows and blur were turned off compositor-side too).
+[shell]
+corner_radius_scale = 0.0
+font_family         = "JetBrains Mono"
+
+[shell.shadow]
+alpha = 0.0
+
+[shell.panel]
+transparency_mode = "soft"
+borders           = true
+shadow            = false
+launcher_placement = "floating"
+launcher_position  = "center"
+
+# rofi showed a plain, tight, icon-only-left list.
+[shell.launcher]
+categories                = false
+compact                   = true
+app_grid                  = false
+show_icons                = true
+show_app_origin_indicator = false
+
 [wallpaper]
 directory = "~/.local/share/wallpapers"
 fill_mode = "crop"

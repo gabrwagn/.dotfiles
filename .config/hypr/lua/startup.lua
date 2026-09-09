@@ -3,8 +3,8 @@
 local host = require("lua.host")
 
 hl.on("hyprland.start", function()
-    hl.exec_cmd("uwsm app -- swaync")
-    hl.exec_cmd("uwsm app -- waybar")
+    -- noctalia replaces waybar, swaync, hyprpaper and rofi
+    hl.exec_cmd("uwsm app -- noctalia")
     hl.exec_cmd("uwsm app -- gnome-keyring-daemon --start --components=pkcs11,secrets,ssh")
     hl.exec_cmd("uwsm app -- hypridle")
 
