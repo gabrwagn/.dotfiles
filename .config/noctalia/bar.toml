@@ -1,16 +1,19 @@
 # Bar layout, mirroring the old waybar module set but keeping noctalia's own
-# floating, rounded geometry.
+# rounded geometry.
 #
-# Not ported: hyprland/submap (no equivalent widget). custom/calendar is
-# replaced by the native calendar service, see calendar.toml.
+# custom/calendar is replaced by the native calendar service, see
+# calendar.toml. hyprland/submap comes back via the hypr-submap plugin.
+
+[plugins]
+enabled = ["k4n4t4/hypr-submap"]
 
 [bar.default]
 position             = "top"
 thickness            = 34
-background_opacity   = 0.5
+background_opacity   = 0.8
 radius               = 0
-radius_bottom_left   = 30
-radius_bottom_right  = 19
+radius_bottom_left   = 34
+radius_bottom_right  = 34
 concave_edge_corners = false
 margin_ends          = 12
 margin_edge          = 0
@@ -26,7 +29,7 @@ shadow               = true
 reserve_space        = true
 scale                = 1.15
 
-start  = ["workspaces"]
+start  = ["workspaces", "submap"]
 center = ["audio_visualizer"]
 end    = [
   "tray",
@@ -43,6 +46,12 @@ end    = [
 [widget.ram]
 type = "sysmon"
 stat = "ram_used"
+
+# Only visible while a submap is active, like waybar's hyprland/submap.
+[widget.submap]
+type              = "k4n4t4/hypr-submap:hypr-submap"
+hide_when_default = true
+glyph             = "keyboard"
 
 [widget.clock]
 format         = "{:%H:%M}"
