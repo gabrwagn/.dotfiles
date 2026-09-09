@@ -3,34 +3,46 @@
 local host = require("lua.host")
 
 if host.is_laptop then
-    -- apple-dcp, kernel >= 7.1.13: NEVER set `disabled = true` on eDP-1.
+    -- Docked: external only, internal panel off. Undocked: panel only.
     --
-    -- Evidence (journalctl -k, boot of 2026-09-09 09:48):
-    --   09:49:30  plug #1 -> set_digital_out_mode "4096x2160" timing 92. Works.
-    --   09:49:36  eDP disabled -> 38bc00000.dcp logs unplug_gated +
-    --             "IOAVVideoInterface open failed" x4
-    --   09:49:50  plug #2 -> cb_hotplug connected:1, then only
-    --             "swallowed swap ... fControllerPowerState is 0".
-    --             set_digital_out_mode never reaches the kernel again.
-    --   09:50:01  plug #3 -> identical. Wedged until reboot.
+    -- apple-dcp on kernel 7.1.13 sometimes wedges on hotplug and refuses to
+    -- turn Hyprland's modeset commit into an actual mode:
+    --   cb_hotplug() connected:1, valid_mode:0
+    --   swap_submit_dcp: swallowed swap ... fControllerPowerState is 0
+    --   swap_submit_dcp: swallowed swap ... timings are not enabled
+    -- Hyprland's own log still shows "drm: Modesetting HDMI-A-1 with
+    -- 4096x2160@60.00Hz", so the failure is below the compositor.
     --
-    -- Hyprland does issue the commit ("drm: Modesetting HDMI-A-1 with
-    -- 4096x2160@60.00Hz" in its log); apple-dcp fails to turn it into a
-    -- modeset once the internal panel's CRTC has been torn down. On kernel
-    -- 7.1.6 (2026-08-21 logs) the same sequence worked fine, so this is a
-    -- driver regression, not a config error.
+    -- Mirroring instead of disabling eDP-1 was tried as a workaround on the
+    -- theory that releasing the internal CRTC caused it. It does not hold up:
+    -- on 2026-09-09 it wedged while mirrored and never disabled, and on a
+    -- different controller (289c00000.dcp, not 38bc00000.dcp), so it is not
+    -- tied to one DCP instance either.
     --
-    -- Mirroring keeps eDP-1 enabled, so the internal CRTC is never released.
+    -- Logging out and back in clears it - the driver recovers once DRM master
+    -- is released - so a wedge costs a relog, not a reboot. Kernel 7.1.6
+    -- (still installed) predates the regression if this gets tiring.
     --
     -- mode = preferred -> 4096x2160@60 (timingID 92), the timing this TV
     -- accepts. Do not pin 3840x2160 (timingID 84), it fails.
     -- scale 1.066667 -> 3840 logical width.
+    local function pull_workspaces(output)
+        -- Hyprland 0.56.2 segfaults in CMonitor::changeWorkspace when a
+        -- workspace dispatcher targets a workspace whose monitor is gone
+        -- (crash report 1707, 2026-09-09: undocked, then SUPER+<n>).
+        for i = 1, 10 do
+            hl.dispatch(hl.dsp.workspace.move({ workspace = i, monitor = output }))
+        end
+    end
+
     local function set_docked(docked)
         if docked then
             hl.monitor({ output = "HDMI-A-1", mode = "preferred", position = "0x0", scale = 1.066667 })
-            hl.monitor({ output = "eDP-1", mode = "preferred", position = "auto", scale = 2.0, mirror = "HDMI-A-1" })
+            hl.monitor({ output = "eDP-1", disabled = true })
+            pull_workspaces("HDMI-A-1")
         else
             hl.monitor({ output = "eDP-1", mode = "preferred", position = "0x0", scale = 2.0, mirror = "none" })
+            pull_workspaces("eDP-1")
         end
     end
 
