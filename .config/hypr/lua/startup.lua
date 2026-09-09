@@ -8,10 +8,6 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("uwsm app -- gnome-keyring-daemon --start --components=pkcs11,secrets,ssh")
     hl.exec_cmd("uwsm app -- hypridle")
 
-    if host.is_desktop then
-        hl.exec_cmd("uwsm app -- clipse -listen")
-    end
-
     -- Open in specific workspaces
     if host.is_laptop then
         hl.exec_cmd("[workspace 3 silent] uwsm app -- firefox -P \"slack\"")
