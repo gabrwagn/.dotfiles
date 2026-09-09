@@ -21,7 +21,7 @@ theme.shadow_color = colors.shadow
 theme.gaps_in     = 2
 theme.gaps_out    = host.is_laptop and 4 or 12
 theme.border_size = 2
-theme.rounding    = 0
+theme.rounding    = 6
 
 -- Opacity
 theme.active_opacity   = 1.0
