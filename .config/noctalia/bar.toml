@@ -1,19 +1,19 @@
-# Bar layout, mirroring the old waybar module set.
+# Bar layout, mirroring the old waybar module set but keeping noctalia's own
+# floating, rounded geometry.
 #
-# Not ported: hyprland/submap (no equivalent widget) and custom/calendar (the
-# calcurse "next appointment" script - noctalia's text widget is static and
-# custom_button has no command output, so this needs a plugin or a hook).
+# Not ported: hyprland/submap (no equivalent widget). custom/calendar is
+# replaced by the native calendar service, see calendar.toml.
 
 [bar.default]
 position           = "top"
-thickness          = 26
-background_opacity = 0.7
-radius             = 0
-margin_ends        = 0
-margin_edge        = 0
-padding            = 10
-widget_spacing     = 8
-shadow             = false
+thickness          = 34
+background_opacity = 1.0
+radius             = 12
+margin_ends        = 180
+margin_edge        = 10
+padding            = 14
+widget_spacing     = 6
+shadow             = true
 capsule            = false
 reserve_space      = true
 scale              = 1.15
