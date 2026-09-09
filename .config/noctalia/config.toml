@@ -1,0 +1,8 @@
+# Noctalia shell configuration.
+# Hand-written base layer; GUI changes land in ~/.local/state/noctalia/settings.toml
+# and override anything set here.
+
+[theme]
+mode           = "dark"
+source         = "custom"
+custom_palette = "Paradise"
