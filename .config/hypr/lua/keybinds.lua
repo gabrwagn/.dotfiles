@@ -4,13 +4,13 @@ local mainMod = "SUPER"
 local host    = require("lua.host")
 local ipc     = "noctalia msg "
 
-local browser  = host.is_laptop and "helium" or "firefox"
+-- local browser  = host.is_laptop and "helium" or "firefox"
 
 -- Terminal
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd("uwsm app -- alacritty"))
 
 -- Browser
-hl.bind(mainMod .. " + b", hl.dsp.exec_cmd("uwsm app -- " .. browser))
+-- hl.bind(mainMod .. " + b", hl.dsp.exec_cmd("uwsm app -- " .. browser))
 
 -- Application launcher
 hl.bind(mainMod .. " + Space", hl.dsp.exec_cmd(ipc .. "panel-toggle launcher"))
@@ -33,6 +33,7 @@ hl.bind("ALT + l", hl.dsp.exec_cmd(ipc .. "session lock"))
 
 -- Notification history
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(ipc .. "panel-toggle control-center notifications"))
+hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd(ipc .. "notification-clear-active && " .. ipc .. "notification-clear-history"))
 
 -- Screenshots (saved to ~/Pictures/Screenshots and copied to the clipboard)
 hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd(ipc .. "screenshot-fullscreen"))
