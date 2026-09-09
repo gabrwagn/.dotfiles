@@ -19,7 +19,7 @@
       ".env.example": "allow"
     },
     "edit": {
-      "*": "ask",
+      "*": "allow",
       "**/*.env": "deny",
       "**/*.env.*": "deny",
       "**/*.env.example": "ask",
@@ -44,7 +44,8 @@
       "rmdir *": "deny",
       "mv *": "ask",
       "chmod *": "deny",
-      "chown *": "deny"
+      "chown *": "deny",
+      "gcloud *": "ask"
     },
     "external_directory": {
       "*": "ask",
