@@ -68,9 +68,9 @@ backlight_device = "apple-panel-bl"
 [brightness.monitor.HDMI-A-1]
 backend = "none"
 
-# Re-sync the greeter whenever the wallpaper, palette, theme mode or font
-# changes. Ineffective on noctalia 5.0.1: it invokes the helper through run0
-# with the legacy positional syntax and stages [[session.actions]], both
-# rejected by the constrained helper. See noctalia/greeter/install.sh.
+# Off: on noctalia 5.0.1 an auto-sync only produces an admin prompt and then
+# fails, because it invokes the helper through run0 with the legacy positional
+# syntax and stages [[session.actions]], both rejected by the constrained
+# helper. Sync by hand instead, see noctalia/greeter/install.sh.
 [shell.greeter_sync]
-auto_sync = true
+auto_sync = false
