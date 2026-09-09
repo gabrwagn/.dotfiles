@@ -1,0 +1,16 @@
+# Administrator-controlled greeter configuration.
+# Appearance values come from Noctalia Sync (sync.toml) unless pinned here;
+# the shell-side source of truth lives beside this file in ../.
+
+[session]
+default = "Hyprland (uwsm-managed)"
+
+[appearance]
+scheme                  = "Synced"
+theme_mode              = "dark"
+font_family             = "JetBrains Mono"
+corner_radius_scale     = 1.0
+password_style          = "default"
+hide_logo               = true
+scheme_selector_position = "hidden"
+power_buttons_position  = "bottom-right"
