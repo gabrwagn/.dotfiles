@@ -60,6 +60,11 @@ show_icons          = false
 show_labels         = false
 style               = "focus_hint"
 
+# The glyph sits visibly high in the plugged/full state, and glyph mode has no
+# alignment setting, so the widget only shows while actually on battery.
+[widget.battery]
+hide_when_plugged = true
+
 # Mouse battery. There is no hide-when-absent option, so this can read stale
 # while the mouse is off.
 [widget.mouse_battery]
