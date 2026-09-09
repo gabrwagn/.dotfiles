@@ -57,6 +57,7 @@ focused_output_only = true
 hide_when_empty     = true
 show_icons          = false
 show_labels         = false
+style               = "focus_hint"
 
 [widget.audio_visualizer]
 bands = 15
