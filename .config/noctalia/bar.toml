@@ -47,6 +47,14 @@ end    = [
 type = "sysmon"
 stat = "ram_used"
 
+[widget.workspaces]
+active_pill_size    = 1.0
+inactive_pill_size  = 0.5
+focused_output_only = true
+hide_when_empty     = true
+show_icons          = false
+show_labels         = false
+
 # Only visible while a submap is active, like waybar's hyprland/submap.
 [widget.submap]
 type              = "k4n4t4/hypr-submap:hypr-submap"

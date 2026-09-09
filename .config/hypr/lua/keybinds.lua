@@ -17,6 +17,7 @@ hl.bind(mainMod .. " + Space", hl.dsp.exec_cmd(ipc .. "panel-toggle launcher"))
 
 -- Noctalia shell surfaces
 hl.bind(mainMod .. " + S",         hl.dsp.exec_cmd(ipc .. "panel-toggle control-center"))
+hl.bind(mainMod .. " + C",         hl.dsp.exec_cmd(ipc .. "panel-toggle control-center calendar"))
 hl.bind(mainMod .. " + comma",     hl.dsp.exec_cmd(ipc .. "settings-toggle"))
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd(ipc .. "panel-toggle clipboard"))
 hl.bind("ALT + Tab",               hl.dsp.exec_cmd(ipc .. "window-switcher"))
