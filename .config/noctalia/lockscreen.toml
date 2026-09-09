@@ -1,0 +1,60 @@
+# Lock screen layout. The Settings editor writes these tables to the
+# app-managed state file; kept here so the layout survives a state wipe.
+# Edit visually with: noctalia msg lockscreen-widgets-edit
+#
+# The password field's focus ring cannot be turned off: focusRingWidth is a
+# compile-time constant in noctalia and its colour comes from the Secondary
+# palette role.
+
+[lockscreen_widgets]
+enabled = true
+schema_version = 2
+widget_order = [ "lockscreen-clock@HDMI-A-1", "lockscreen-login-box@HDMI-A-1" ]
+
+    [lockscreen_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [lockscreen_widgets.widget."lockscreen-clock@HDMI-A-1"]
+    box_height = 130.0
+    box_width = 460.0
+    cx = 1920.0
+    cy = 803.5
+    output = "HDMI-A-1"
+    placement_height = 2025.0
+    placement_width = 3840.0
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget."lockscreen-clock@HDMI-A-1".settings]
+        background_opacity = 0.0
+        background_radius = 0.0
+        format = "{:%-H:%M}"
+
+    [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1"]
+    box_height = 70.0
+    box_width = 405.0
+    cx = 1920.0
+    cy = 1012.0
+    output = "HDMI-A-1"
+    placement_height = 2025.0
+    placement_width = 3840.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.0
+        background_radius = 0.0
+        center_password_text = true
+        input_opacity = 0.0
+        input_radius = 6.0
+        layout = "compact"
+        show_caps_lock = true
+        show_keyboard_layout = false
+        show_login_button = false
+        show_media = false
+        show_session_buttons = false
+        show_unlock_hint = false
+        show_weather = false

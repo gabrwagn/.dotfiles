@@ -22,6 +22,10 @@ enable_community_templates = false
 [shell]
 corner_radius_scale = 1.0
 font_family         = "JetBrains Mono"
+password_style      = "default"
+input_borders       = false
+card_borders        = false
+popup_borders       = false
 
 [shell.shadow]
 alpha = 0.55
