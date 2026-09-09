@@ -34,16 +34,17 @@ alpha = 0.55
 transparency_mode = "glass"
 borders           = true
 shadow            = true
-launcher_placement = "floating"
-launcher_position  = "center"
+launcher_placement = "attached"
 
-# rofi showed a plain, tight, icon-only-left list.
+# Attached to the bar, plain text rows, no icons or usage-based reordering.
 [shell.launcher]
 categories                = false
-compact                   = true
+compact                   = false
 app_grid                  = false
 show_icons                = false
 show_app_origin_indicator = false
+sort_by_usage             = false
+pinned                    = ["Alacritty"]
 
 [wallpaper]
 directory = "~/.local/share/wallpapers"
