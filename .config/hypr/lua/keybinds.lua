@@ -2,6 +2,7 @@
 
 local mainMod = "SUPER"
 local host    = require("lua.host")
+local ipc     = "noctalia msg "
 
 local browser  = host.is_laptop and "helium" or "firefox"
 
@@ -12,7 +13,12 @@ hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd("uwsm app -- alacritty"))
 hl.bind(mainMod .. " + b", hl.dsp.exec_cmd("uwsm app -- " .. browser))
 
 -- Application launcher
-hl.bind(mainMod .. " + Space", hl.dsp.exec_cmd("uwsm app -- rofi -show drun -theme $HOME/.config/rofi/paradise.rasi -run-command 'zsh -ic \"{cmd}\"'"))
+hl.bind(mainMod .. " + Space", hl.dsp.exec_cmd(ipc .. "panel-toggle launcher"))
+
+-- Noctalia shell surfaces
+hl.bind(mainMod .. " + S",     hl.dsp.exec_cmd(ipc .. "panel-toggle control-center"))
+hl.bind(mainMod .. " + comma", hl.dsp.exec_cmd(ipc .. "settings-toggle"))
+hl.bind("ALT + Tab",           hl.dsp.exec_cmd(ipc .. "window-switcher"))
 
 -- Window management
 hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
@@ -27,15 +33,15 @@ hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t"))
 -- Fullscreen screenshot (save to ~/Pictures + copy to clipboard)
 hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("mkdir -p ~/Pictures/Screenshots && grim ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png && grim - | wl-copy"))
 
--- Multimedia keys
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("~/.config/hypr/scripts/volume.sh up"),   { repeating = true })
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("~/.config/hypr/scripts/volume.sh down"),  { repeating = true })
-hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("~/.config/hypr/scripts/volume.sh mute"),  { locked = true })
+-- Multimedia keys (noctalia handles the OSD)
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(ipc .. "volume-up"),   { repeating = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(ipc .. "volume-down"), { repeating = true })
+hl.bind("XF86AudioMute",        hl.dsp.exec_cmd(ipc .. "volume-mute"), { locked = true })
 hl.bind("XF86AudioPlay",        hl.dsp.exec_cmd("playerctl play-pause"))
 hl.bind("XF86AudioNext",        hl.dsp.exec_cmd("playerctl next"))
 hl.bind("XF86AudioPrev",        hl.dsp.exec_cmd("playerctl previous"))
 
--- Brightness controls
+-- Brightness controls (script changes the panel, noctalia draws the OSD)
 hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("~/.config/hypr/scripts/brightness.sh up"),   { repeating = true })
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("~/.config/hypr/scripts/brightness.sh down"), { repeating = true })
 
@@ -95,10 +101,10 @@ hl.define_submap("resize", function()
     hl.bind("Return", hl.dsp.submap("reset"))
 end)
 
--- System menu with rofi
-hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("uwsm app -- rofi -show power-menu -theme ~/.config/rofi/paradise.rasi -modi power-menu:~/.config/rofi/rofi-power-menu"))
+-- Session menu
+hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd(ipc .. "panel-toggle session"))
 if host.is_laptop then
-    hl.bind("XF86PowerOff", hl.dsp.exec_cmd("uwsm app -- rofi -show power-menu -theme ~/.config/rofi/paradise.rasi -modi power-menu:~/.config/rofi/rofi-power-menu"))
+    hl.bind("XF86PowerOff", hl.dsp.exec_cmd(ipc .. "panel-toggle session"))
 end
 
 -- Fullscreen
