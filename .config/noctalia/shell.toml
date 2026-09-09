@@ -39,3 +39,15 @@ filename_pattern  = "%Y-%m-%d_%H-%M-%S"
 copy_to_clipboard = true
 freeze_screen     = true
 show_cursor       = false
+
+# Low-battery warnings. Peripherals only warn when given an explicit
+# threshold, and their UPower paths embed the MAC address, so re-pairing a
+# device silently disables its warning.
+[battery]
+warning_threshold = 10
+
+[battery.device."/org/freedesktop/UPower/devices/battery_hidpp_battery_0"]
+warning_threshold = 15      # MX Vertical
+
+[battery.device."/org/freedesktop/UPower/devices/headset_dev_F8_4E_17_DE_F3_61"]
+warning_threshold = 20

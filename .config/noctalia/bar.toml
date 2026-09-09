@@ -43,6 +43,7 @@ end    = [
   "network",
   "notifications",
   "battery",
+  "mouse_battery",
   "clock",
 ]
 
@@ -58,6 +59,13 @@ hide_when_empty     = true
 show_icons          = false
 show_labels         = false
 style               = "focus_hint"
+
+# Mouse battery. There is no hide-when-absent option, so this can read stale
+# while the mouse is off.
+[widget.mouse_battery]
+type           = "battery"
+device         = "/org/freedesktop/UPower/devices/battery_hidpp_battery_0"
+hide_when_full = true
 
 [widget.audio_visualizer]
 bands = 15
