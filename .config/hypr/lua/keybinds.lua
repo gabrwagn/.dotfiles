@@ -27,7 +27,7 @@ hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
 hl.bind(mainMod .. " + B", hl.dsp.layout("splitratio exact 0.5"))
 
 -- Lock screen
-hl.bind("ALT + l", hl.dsp.exec_cmd("uwsm app -- ~/.config/hypr/scripts/lock"))
+hl.bind("ALT + l", hl.dsp.exec_cmd(ipc .. "session lock"))
 
 -- Notification history
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(ipc .. "panel-toggle control-center notifications"))

@@ -12,6 +12,15 @@ offset_x           = 10
 offset_y           = 10
 max_visible        = 3
 
+# Lock screen. Authenticates through the `login` PAM service, so no extra
+# /etc/pam.d entry is needed. blurred_desktop reproduces what the old
+# scripts/lock did by hand: grim a snapshot, blur it, show it behind hyprlock.
+[lockscreen]
+enabled         = true
+blurred_desktop = true
+blur_intensity  = 0.5
+tint_intensity  = 0.3
+
 # Screenshots, replacing the grim + wl-copy keybind.
 [shell.screenshot]
 save_to_file      = true
