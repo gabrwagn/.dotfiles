@@ -31,8 +31,9 @@ hl.bind("ALT + l", hl.dsp.exec_cmd("uwsm app -- ~/.config/hypr/scripts/lock"))
 -- Notification history
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(ipc .. "panel-toggle control-center notifications"))
 
--- Fullscreen screenshot (save to ~/Pictures + copy to clipboard)
-hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("mkdir -p ~/Pictures/Screenshots && grim ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png && grim - | wl-copy"))
+-- Screenshots (saved to ~/Pictures/Screenshots and copied to the clipboard)
+hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd(ipc .. "screenshot-fullscreen"))
+hl.bind(mainMod .. " + CTRL + P",  hl.dsp.exec_cmd(ipc .. "screenshot-region"))
 
 -- Multimedia keys (noctalia handles the OSD)
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(ipc .. "volume-up"),   { repeating = true })

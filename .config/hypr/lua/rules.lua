@@ -24,6 +24,12 @@ hl.window_rule({
 -- Bigger gaps on external monitors
 hl.workspace_rule({ workspace = "m[HDMI-A-1]", gaps_out = 12 })
 
+-- Keep the first five workspaces alive so noctalia's indicator shows them even
+-- when empty. Both hosts drive a single output, so these are left unpinned.
+for i = 1, 5 do
+    hl.workspace_rule({ workspace = tostring(i), persistent = true })
+end
+
 -- Layer rules
 -- Blur behind noctalia's shell surfaces. Compositor blur stays off for regular
 -- windows; this is the closest thing to the fullscreen dim rofi used to draw.

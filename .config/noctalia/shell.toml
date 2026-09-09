@@ -1,0 +1,22 @@
+# Notification toasts, carrying over the swaync geometry and placement.
+# swaync's timeout/timeout-low/timeout-critical have no global equivalent:
+# noctalia respects the sender's expire timeout and only overrides per filter.
+
+[notification]
+enable_daemon      = true
+position           = "top_right"
+layer              = "overlay"
+background_opacity = 0.7
+border             = true
+offset_x           = 10
+offset_y           = 10
+max_visible        = 3
+
+# Screenshots, replacing the grim + wl-copy keybind.
+[shell.screenshot]
+save_to_file      = true
+directory         = "~/Pictures/Screenshots"
+filename_pattern  = "%Y-%m-%d_%H-%M-%S"
+copy_to_clipboard = true
+freeze_screen     = true
+show_cursor       = false
