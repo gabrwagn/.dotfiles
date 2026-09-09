@@ -38,7 +38,7 @@ launcher_position  = "center"
 categories                = false
 compact                   = true
 app_grid                  = false
-show_icons                = true
+show_icons                = false
 show_app_origin_indicator = false
 
 [wallpaper]
