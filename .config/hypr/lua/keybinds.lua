@@ -24,6 +24,9 @@ hl.bind("ALT + l", hl.dsp.exec_cmd("uwsm app -- ~/.config/hypr/scripts/lock"))
 -- Notification panel
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t"))
 
+-- Fullscreen screenshot (save to ~/Pictures + copy to clipboard)
+hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("mkdir -p ~/Pictures/Screenshots && grim ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png && grim - | wl-copy"))
+
 -- Multimedia keys
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("~/.config/hypr/scripts/volume.sh up"),   { repeating = true })
 hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("~/.config/hypr/scripts/volume.sh down"),  { repeating = true })
