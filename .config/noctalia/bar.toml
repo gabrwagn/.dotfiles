@@ -33,6 +33,12 @@ reserve_space        = true
 scale                = 1.0
 font_scale           = 1.15
 
+# Match the compositor gaps: 4 on the laptop panel (theme.gaps_out) and 12 on
+# the TV (the m[HDMI-A-1] workspace rule in hypr/lua/rules.lua).
+[bar.default.monitor.hdmi]
+match       = "HDMI-A-1"
+margin_ends = 12
+
 start  = ["workspaces", "submap"]
 center = ["audio_visualizer"]
 end    = [
