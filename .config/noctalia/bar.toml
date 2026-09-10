@@ -5,7 +5,7 @@
 # calendar.toml. hyprland/submap comes back via the hypr-submap plugin.
 
 [plugins]
-enabled = ["k4n4t4/hypr-submap"]
+enabled = ["k4n4t4/hypr-submap", "gabwag/audio-sink-icon"]
 
 [bar.default]
 position             = "top"
@@ -40,6 +40,7 @@ end    = [
   "bluetooth",
   "ram",
   "volume",
+  "sink_icon",
   "network",
   "notifications",
   "battery",
@@ -71,6 +72,10 @@ hide_when_plugged = true
 type           = "battery"
 device         = "/org/freedesktop/UPower/devices/battery_hidpp_battery_0"
 hide_when_full = true
+
+# Headphones glyph while a bluetooth sink is active (local plugin).
+[widget.sink_icon]
+type = "gabwag/audio-sink-icon:sink-icon"
 
 [widget.audio_visualizer]
 bands = 15
