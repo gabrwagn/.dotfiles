@@ -28,6 +28,15 @@ hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
 -- Lock screen
 hl.bind("ALT + l", hl.dsp.exec_cmd(ipc .. "session lock"))
 
+-- Blind recovery: force the laptop panel back on. Undocking has left the
+-- machine with no enabled output before, which is otherwise only escapable
+-- by holding the power button.
+hl.bind(mainMod .. " + CTRL + SHIFT + R", hl.dsp.exec_cmd(
+    "hyprctl keyword monitor 'eDP-1,preferred,0x0,2' ; sleep 0.5 ; " ..
+    "hyprctl dispatch 'hl.dsp.dpms(\"on\", \"eDP-1\")' ; " ..
+    "brightnessctl -d apple-panel-bl set 50%"
+))
+
 -- Notification history
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(ipc .. "panel-toggle control-center notifications"))
 hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd(ipc .. "notification-clear-active && " .. ipc .. "notification-clear-history"))

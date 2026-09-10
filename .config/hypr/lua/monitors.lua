@@ -41,7 +41,19 @@ if host.is_laptop then
             hl.monitor({ output = "eDP-1", disabled = true })
             pull_workspaces("HDMI-A-1")
         else
-            hl.monitor({ output = "eDP-1", mode = "preferred", position = "0x0", scale = 2.0, mirror = "none" })
+            -- `disabled = false` is mandatory: re-stating mode/position/scale
+            -- does not clear the flag set above, and on 2026-09-10 that left
+            -- the machine with no enabled output after an undock. The kernel
+            -- logged no modeset attempt at all and it needed a power cycle.
+            hl.monitor({
+                output   = "eDP-1",
+                disabled = false,
+                mode     = "preferred",
+                position = "0x0",
+                scale    = 2.0,
+                mirror   = "none",
+            })
+            hl.dispatch(hl.dsp.dpms("on", "eDP-1"))
             pull_workspaces("eDP-1")
         end
     end
