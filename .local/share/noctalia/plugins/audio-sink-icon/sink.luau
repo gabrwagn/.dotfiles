@@ -1,11 +1,16 @@
--- Show a headphones glyph while the default PipeWire sink is a Bluetooth
--- device, and nothing otherwise. Noctalia's own volume widget varies its icon
--- by level, not by device type, so this sits next to it.
+-- Show a headphones glyph while a Bluetooth audio sink exists, and nothing
+-- otherwise. Noctalia's own volume widget varies its icon by level, not by
+-- device type, so this sits next to it.
+--
+-- Presence is checked rather than the default sink: audio is routed through
+-- an effects chain here (audio_effect.j314-convolver), so the default sink
+-- name does not mention bluez even while the headset is playing. A
+-- bluez_output sink only exists while a device is connected.
 
-local isBluetooth = false
+local hasBluetooth = false
 
 local function render()
-    if isBluetooth then
+    if hasBluetooth then
         barWidget.setGlyph("headphones")
         barWidget.setVisible(true)
     else
@@ -14,10 +19,10 @@ local function render()
 end
 
 local function refresh()
-    noctalia.runAsync({ "pactl", "get-default-sink" }, function(result)
+    noctalia.runAsync({ "pactl", "list", "short", "sinks" }, function(result)
         -- The callback receives a table, not a string.
         local out = (result ~= nil and result.stdout) or ""
-        isBluetooth = out:lower():find("bluez", 1, true) ~= nil
+        hasBluetooth = out:find("bluez_output", 1, true) ~= nil
         render()
     end)
 end

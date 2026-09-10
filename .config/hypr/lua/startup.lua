@@ -3,7 +3,8 @@
 local host = require("lua.host")
 
 hl.on("hyprland.start", function()
-    -- noctalia replaces waybar, swaync, hyprpaper and rofi
+    -- noctalia replaces waybar, swaync, hyprpaper and rofi; hypridle stays the
+    -- idle manager so a shell crash cannot stop the session from locking
     hl.exec_cmd("uwsm app -- noctalia")
     hl.exec_cmd("uwsm app -- gnome-keyring-daemon --start --components=pkcs11,secrets,ssh")
     hl.exec_cmd("uwsm app -- hypridle")

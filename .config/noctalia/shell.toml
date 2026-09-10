@@ -51,3 +51,19 @@ warning_threshold = 15      # MX Vertical
 
 [battery.device."/org/freedesktop/UPower/devices/headset_dev_F8_4E_17_DE_F3_61"]
 warning_threshold = 20
+
+# hypridle owns idle on this machine; see hypr/hypridle.conf.
+#
+# Two idle managers ran at once on 2026-09-10 and noctalia's screen_off powers
+# down every output, including the HDMI link, which wedges apple-dcp until the
+# session restarts. Keeping idle in a separate process also means a noctalia
+# crash cannot take idle locking down with it, since the lock screen is
+# noctalia's too.
+[idle.behavior.lock]
+enabled = false
+
+[idle.behavior.screen-off]
+enabled = false
+
+[idle.behavior.lock-and-suspend]
+enabled = false
