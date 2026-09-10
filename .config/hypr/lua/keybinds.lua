@@ -32,7 +32,7 @@ hl.bind("ALT + l", hl.dsp.exec_cmd(ipc .. "session lock"))
 -- machine with no enabled output before, which is otherwise only escapable
 -- by holding the power button.
 hl.bind(mainMod .. " + CTRL + SHIFT + R", hl.dsp.exec_cmd(
-    "hyprctl keyword monitor 'eDP-1,preferred,0x0,2' ; sleep 0.5 ; " ..
+    "hyprctl eval 'hl.monitor({ output = \"eDP-1\", disabled = false, mode = \"preferred\", position = \"0x0\", scale = 1.5 })' ; sleep 0.5 ; " ..
     "hyprctl dispatch 'hl.dsp.dpms(\"on\", \"eDP-1\")' ; " ..
     "brightnessctl -d apple-panel-bl set 50%"
 ))

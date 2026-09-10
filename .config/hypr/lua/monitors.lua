@@ -50,7 +50,7 @@ if host.is_laptop then
                 disabled = false,
                 mode     = "preferred",
                 position = "0x0",
-                scale    = 2.0,
+                scale    = 1.5,
                 mirror   = "none",
             })
             hl.dispatch(hl.dsp.dpms("on", "eDP-1"))
