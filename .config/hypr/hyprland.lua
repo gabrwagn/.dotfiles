@@ -147,3 +147,6 @@ hl.config({
 
 hl.notification.create({ text = "Config reloaded", duration = 3000 })
 
+
+-- For Noctalia Color templates
+require("noctalia").apply_theme()
