@@ -35,6 +35,13 @@ fi
 
 alias oc="opencode --continue --port"
 
+# fastfetch has no config.jsonc here, so the noctalia palette has to be passed
+# explicitly. Partial configs merge over the defaults, and the theme file only
+# sets logo/display colours, so the default module list is preserved.
+if command -v fastfetch >/dev/null; then
+    alias fastfetch='fastfetch --config ~/.config/fastfetch/themes/noctalia.jsonc'
+fi
+
 # Host-specific aliases
 if [[ "$(hostname)" == "mononoke" ]]; then
     alias rt='tmux -L rt attach -t rt 2>/dev/null || echo "rtorrent session not running"'
