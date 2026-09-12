@@ -10,7 +10,7 @@ if host.is_laptop then
     hl.monitor({ output = "eDP-1", mode = "preferred", position = "0x0", scale = 2.0, mirror = "HDMI-A-1" })
 
 elseif host.is_desktop then
-    hl.monitor({ output = "HDMI-A-2", mode = "preferred", position = "0x0", scale = "auto" })
+    hl.monitor({ output = "HDMI-A-2", mode = "4096x2160@120", position = "0x0", scale = "auto" })
 end
 
 -- Fallback for any other monitor
