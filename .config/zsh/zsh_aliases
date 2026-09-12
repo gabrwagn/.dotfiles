@@ -38,5 +38,5 @@ alias oc="opencode --continue --port"
 # Host-specific aliases
 if [[ "$(hostname)" == "mononoke" ]]; then
     alias rt='tmux -L rt attach -t rt 2>/dev/null || echo "rtorrent session not running"'
-    alias arrctl='docker compose -f ~/.local/docker/arr/docker-compose.yml'
+    alias arrctl='docker compose -f ~/.local/docker/arr/docker-compose.yml --env-file ~/.local/docker/arr/.env'
 fi
