@@ -7,7 +7,9 @@ hl.on("hyprland.start", function()
     -- idle manager so a shell crash cannot stop the session from locking
     hl.exec_cmd("uwsm app -- noctalia")
     hl.exec_cmd("uwsm app -- gnome-keyring-daemon --start --components=pkcs11,secrets,ssh")
-    hl.exec_cmd("uwsm app -- hypridle")
+    -- per-host idle rules: the jellyfin box (mononoke) must never sleep.
+    local hidle_conf = host.is_laptop and "hypridle-nausicaa.conf" or "hypridle-mononoke.conf"
+    hl.exec_cmd("uwsm app -- hypridle -c " .. os.getenv("HOME") .. "/.dotfiles/.config/hypr/" .. hidle_conf)
 
     -- Open in specific workspaces
     if host.is_laptop then
