@@ -29,8 +29,8 @@ alias reloadzshrc='echo "reloading .zshrc" && source ~/.config/zsh/.zshrc'
 alias rm='rm -i'               # Prompt before deleting files
 
 if command -v exa >/dev/null; then
-    alias ls='exa -lah --icons'
-    alias ll='exa -lah --icons'
+    alias ls='exa -lah --icons always'
+    alias ll='exa -lah --icons always'
 fi
 
 alias oc="opencode --continue --port"
