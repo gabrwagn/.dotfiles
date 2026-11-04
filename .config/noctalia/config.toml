@@ -7,7 +7,9 @@ mode              = "dark"
 source            = "custom"
 custom_palette    = "Paradise"
 builtin           = "Catppuccin"
-community_palette = "Paradise"
+# community_palette deliberately unset: the community catalog ships its own
+# Paradise, which differs from the custom one in palettes/Paradise.json. Only
+# the custom copy has the hand-tuned light variant.
 
 # theme.source / palette selection is daemon-owned: noctalia writes its live
 # choice back into the state file, so the values here only seed a fresh state

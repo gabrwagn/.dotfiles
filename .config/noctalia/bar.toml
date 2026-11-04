@@ -17,7 +17,7 @@ radius_bottom_right  = 6
 concave_edge_corners = false
 margin_ends          = 4
 margin_edge          = 0
-border               = "outline"
+border               = "outline_variant"
 border_width         = 0.0
 padding              = 12
 widget_spacing       = 5
@@ -46,6 +46,7 @@ end    = [
   "notifications",
   "battery",
   "mouse_battery",
+  "theme_mode",
   "clock",
 ]
 
@@ -106,6 +107,11 @@ glyph             = "keyboard"
 [widget.clock]
 format         = "{:%H:%M}"
 tooltip_format = "{:%A, %d %B %Y}"
+
+# Dark/light switch. Paradise carries both variants (palettes/Paradise.json),
+# so this flips the whole palette plus every rendered template.
+[widget.theme_mode]
+scale = 1.25
 
 [widget.keyboard_layout]
 display                 = "short"
