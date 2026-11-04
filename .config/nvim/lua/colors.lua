@@ -10,6 +10,13 @@ if present then
   base16.setup(color)
 end
 
+-- base16-colorscheme never calls `:colorscheme`, so no colorscheme registers.
+-- Without `g:colors_name` LazyVim and most plugins (noice, snacks, which-key,
+-- bufferline, lualine theme resolution) skip their per-colorscheme setup and
+-- fall back to dark defaults, which is why overlay windows end up unthemed.
+vim.g.colors_name = "base16-paradise"
+vim.o.background = "dark"
+
 -- Highlights
 local function hl(highlight, fg, bg)
   if fg == nil then
@@ -145,8 +152,91 @@ vim.api.nvim_set_hl(0, "DiffDelete", {bg = "#37222c"})
 vim.api.nvim_set_hl(0, "DiffChange", {bg = "#1f2231"})
 vim.api.nvim_set_hl(0, "DiffText", {bg = "#394b70"})
 
--- transparent background
+-- transparent background for the editor itself
 vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
-vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
-vim.api.nvim_set_hl(0, 'FloatBorder', { bg = 'none' })
-vim.api.nvim_set_hl(0, 'Pmenu', { bg = 'none' })
+
+-- Overlay windows (floats, popups, pickers) must stay opaque. They used to be
+-- transparent too, which these plugins (which-key, fzf-lua, cmp, noice, snacks,
+-- lsp hover) resolve through NormalFloat/Pmenu/FloatBorder. Transparent floats
+-- over a semi-transparent terminal render as undefined default colors.
+-- Explicit paradise surfaces, re-applied after plugins load their own groups.
+local function paradise_overlay_hl()
+  local c = color
+
+  vim.api.nvim_set_hl(0, "NormalFloat", { fg = c.base0F, bg = c.base00 })
+  vim.api.nvim_set_hl(0, "FloatBorder", { fg = c.base01, bg = c.base00 })
+  vim.api.nvim_set_hl(0, "FloatTitle", { fg = c.base0A, bg = c.base00 })
+
+  vim.api.nvim_set_hl(0, "Pmenu", { fg = c.base0F, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "PmenuSel", { fg = c.base05, bg = c.base02 })
+  vim.api.nvim_set_hl(0, "PmenuSbar", { bg = c.base01 })
+  vim.api.nvim_set_hl(0, "PmenuThumb", { bg = c.base02 })
+  vim.api.nvim_set_hl(0, "PmenuKind", { fg = c.base0E })
+  vim.api.nvim_set_hl(0, "PmenuKindSel", { fg = c.base0E })
+
+  -- which-key
+  vim.api.nvim_set_hl(0, "WhichKey", { fg = c.base0D, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "WhichKeyGroup", { fg = c.base0E, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "WhichKeyDesc", { fg = c.base05, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "WhichKeySeparator", { fg = c.base03, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "WhichKeyValue", { fg = c.base03, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "WhichKeyNormal", { fg = c.base0F, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "WhichKeyBorder", { fg = c.base02, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "WhichKeyTitle", { fg = c.base0A, bg = c.base01 })
+
+  -- fzf-lua
+  vim.api.nvim_set_hl(0, "FzfLuaNormal", { fg = c.base0F, bg = c.base00 })
+  vim.api.nvim_set_hl(0, "FzfLuaBorder", { fg = c.base08, bg = c.base00 })
+  vim.api.nvim_set_hl(0, "FzfLuaTitle", { fg = c.base05, bg = c.base00 })
+  vim.api.nvim_set_hl(0, "FzfLuaFzfMatch", { fg = c.base0D })
+  vim.api.nvim_set_hl(0, "FzfLuaFzfCursorLine", { bg = c.base02 })
+
+  -- cmp
+  vim.api.nvim_set_hl(0, "CmpPmenu", { fg = c.base0F, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "CmpPmenuSel", { fg = c.base05, bg = c.base02 })
+  vim.api.nvim_set_hl(0, "CmpPmenuBorder", { fg = c.base02, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "CmpItemAbbr", { fg = c.base0F })
+  vim.api.nvim_set_hl(0, "CmpItemAbbrMatch", { fg = c.base0D })
+  vim.api.nvim_set_hl(0, "CmpItemAbbrMatchFuzzy", { fg = c.base0D, underline = true })
+  vim.api.nvim_set_hl(0, "CmpItemMenu", { fg = c.base03 })
+  vim.api.nvim_set_hl(0, "CmpItemKind", { fg = c.base0E })
+
+  -- noice
+  vim.api.nvim_set_hl(0, "NoiceCmdlinePopup", { fg = c.base05, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "NoiceFormatError", { fg = c.base08, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "NoiceFormatWarn", { fg = c.base0A, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "NoiceFormatInfo", { fg = c.base0C, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "NoiceBorder", { fg = c.base02, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "NoiceTitle", { fg = c.base0A, bg = c.base01 })
+
+  -- snacks
+  vim.api.nvim_set_hl(0, "SnacksNotifier", { fg = c.base05, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "SnacksNotifierError", { fg = c.base08, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "SnacksNotifierWarn", { fg = c.base0A, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "SnacksNotifierInfo", { fg = c.base0C, bg = c.base01 })
+  vim.api.nvim_set_hl(0, "SnacksDashboardTitle", { fg = c.base0A })
+  vim.api.nvim_set_hl(0, "SnacksDashboardHeader", { fg = c.base0E })
+  vim.api.nvim_set_hl(0, "SnacksDashboardFooter", { fg = c.base05 })
+  vim.api.nvim_set_hl(0, "SnacksDashboardKey", { fg = c.base0D })
+  vim.api.nvim_set_hl(0, "SnacksPicker", { fg = c.base05, bg = c.base00 })
+
+  -- lsp hover / trouble
+  vim.api.nvim_set_hl(0, "LspFloatWinNormal", { fg = c.base05, bg = c.base00 })
+  vim.api.nvim_set_hl(0, "LspFloatWinBorder", { fg = c.base01, bg = c.base00 })
+  vim.api.nvim_set_hl(0, "LspInfoTitle", { fg = c.base0A })
+  vim.api.nvim_set_hl(0, "TroubleNormal", { fg = c.base05, bg = c.base00 })
+
+  -- cursor line inside floats/pickers
+  vim.api.nvim_set_hl(0, "CursorLine", { bg = c.base01 })
+end
+
+paradise_overlay_hl()
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+  once = true,
+  callback = function()
+    vim.g.colors_name = "base16-paradise"
+    vim.o.background = "dark"
+    paradise_overlay_hl()
+  end,
+})
