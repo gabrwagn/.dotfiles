@@ -143,6 +143,13 @@ hl.config({
         mouse_move_enables_dpms  = true,
         key_press_enables_dpms   = true,
     },
+
+    -- Render X11 clients at native pixel density instead of letting the
+    -- compositor upscale them by the 1.5 fractional scale (fixes grainy
+    -- Steam/Battle.net text; they run as Xwayland clients via muvm).
+    xwayland = {
+        force_zero_scaling = true,
+    },
 })
 
 hl.notification.create({ text = "Config reloaded", timeout = 3000 })
