@@ -11,6 +11,17 @@ hl.on("hyprland.start", function()
     local hidle_conf = host.is_laptop and "hypridle-nausicaa.conf" or "hypridle-mononoke.conf"
     hl.exec_cmd("uwsm app -- hypridle -c " .. os.getenv("HOME") .. "/.dotfiles/.config/hypr/" .. hidle_conf)
 
+    -- Sunshine streams onto a headless output rather than HDMI-A-2, so the
+    -- physical monitor is never reconfigured.
+    --
+    -- Creating an output is only reachable over IPC; there is no hl API for it.
+    -- Its geometry and workspace pin are declared in monitors.lua, so this one
+    -- line is the whole of it, and the config stays self-contained rather than
+    -- depending on a script outside the repo.
+    if host.is_desktop then
+        hl.exec_cmd("hyprctl output create headless")
+    end
+
     -- Open in specific workspaces
     if host.is_laptop then
         hl.exec_cmd("[workspace 3 silent] uwsm app -- firefox -P \"slack\"")

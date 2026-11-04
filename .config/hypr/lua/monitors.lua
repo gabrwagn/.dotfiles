@@ -76,6 +76,35 @@ if host.is_laptop then
 
 elseif host.is_desktop then
     hl.monitor({ output = "HDMI-A-2", mode = "4096x2160@120", position = "0x0", scale = "auto" })
+
+    -- Sunshine streaming target.
+    --
+    -- The output does not exist at config-parse time; startup.lua creates it
+    -- with `hyprctl output create headless`, which is IPC-only — there is no
+    -- hl API for creating outputs. This rule only pins its geometry, so a
+    -- config reload mid-stream restores the idle mode instead of letting the
+    -- catch-all rule below reposition it. Verified: a named rule survives the
+    -- empty-output fallback even though the fallback is declared afterwards.
+    --
+    -- x=5120 clears HDMI-A-2 whichever scale "auto" resolves to, and the gap
+    -- between the two is deliberate: non-adjacent outputs mean the pointer
+    -- cannot wander onto the headless display during local use.
+    --
+    -- The mode is only an idle placeholder. ~/.config/sunshine/vdisplay-start.sh
+    -- overwrites it with the connecting client's resolution when a stream
+    -- begins.
+    --
+    -- The name is HEADLESS-1 as long as nothing else creates a headless output
+    -- first. Hyprland increments the counter per `output create` and does not
+    -- reuse freed names, so creating and removing one by hand yields
+    -- HEADLESS-2 next. If that happens, restart the session rather than
+    -- editing this rule; Sunshine's `output_name` is hardcoded to the same
+    -- name.
+    hl.monitor({ output = "HEADLESS-1", mode = "1920x1080@60", position = "5120x0", scale = 1 })
+
+    -- Workspace the streamed session lives on. Never visited locally.
+    -- Must match VD_WORKSPACE in ~/.config/sunshine/vdisplay-common.sh.
+    hl.workspace_rule({ workspace = "name:stream", monitor = "HEADLESS-1", default = true })
 end
 
 -- Fallback for any other monitor
