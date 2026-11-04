@@ -1,0 +1,49 @@
+#!/bin/bash
+# fix-display - Recover a wedged display by bouncing to another VT and back.
+# Usage: fix-display
+#
+# apple-dcp on kernel 7.1.13 wedges after HDMI hotplug or resume (see
+# monitors.lua). Leaving the VT makes Hyprland release DRM master; returning
+# forces a full modeset from scratch, which runs the driver's power-on path
+# and reconnects the DP2HDMI link. Same as Fn+Ctrl+Alt+F3, then Fn+Ctrl+Alt+F2.
+#
+# logind's org.freedesktop.login1.chvt is allowed for active and inactive
+# local sessions, so this needs no root - including the switch back, which
+# runs while our session is in the background.
+#
+# AWAY_VT and DELAY can be overridden from the environment.
+
+set -euo pipefail
+
+AWAY_VT=${AWAY_VT:-3}
+DELAY=${DELAY:-2}
+
+session=$(loginctl show-seat seat0 -p ActiveSession --value)
+home_vt=$(loginctl show-session "$session" -p VTNr --value)
+
+if [[ -z $home_vt || $home_vt == 0 ]]; then
+    printf 'fix-display: active session %s has no VT\n' "$session" >&2
+    exit 1
+fi
+
+if [[ $home_vt == "$AWAY_VT" ]]; then
+    AWAY_VT=$((home_vt + 1))
+fi
+
+switch_to() {
+    busctl call org.freedesktop.login1 /org/freedesktop/login1/seat/seat0 \
+        org.freedesktop.login1.Seat SwitchTo u "$1"
+}
+
+switch_to "$AWAY_VT"
+sleep "$DELAY"
+
+# Stranding the user on a text VT is worse than failing loudly, so retry the
+# way home before giving up.
+for _ in 1 2 3 4 5; do
+    switch_to "$home_vt" && exit 0
+    sleep 1
+done
+
+printf 'fix-display: could not switch back to VT %s\n' "$home_vt" >&2
+exit 1
