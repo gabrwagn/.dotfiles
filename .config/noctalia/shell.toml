@@ -12,6 +12,11 @@ offset_x           = 10
 offset_y           = 10
 max_visible        = 3
 
+# Silent toasts. Volume, power and screenshot sounds stay on; enable_sounds is
+# the master switch for all of them.
+[audio]
+enable_notification_sounds = false
+
 # Volume/brightness sliders: vertical, tucked under the bar's right end.
 [osd]
 orientation        = "vertical"
