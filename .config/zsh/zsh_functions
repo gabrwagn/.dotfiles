@@ -135,7 +135,7 @@ sd() {
   local selected_dir=$(eval "$FZF_CMD" | fzf \
     --bind "alt-h:reload($FZF_CMD --hidden)" \
     --header "alt-h to show hidden directories" \
-    --preview 'exa -l1 --icons --color=always {}' \
+    --preview 'eza -l1 --icons=always --color=always {}' \
     --reverse \
     --border \
     +m)

@@ -28,9 +28,9 @@ alias zshrc='vim --cmd "cd ~/.config/zsh/"'
 alias reloadzshrc='echo "reloading .zshrc" && source ~/.config/zsh/.zshrc'
 alias rm='rm -i'               # Prompt before deleting files
 
-if command -v exa >/dev/null; then
-    alias ls='exa -lah --icons always'
-    alias ll='exa -lah --icons always'
+if command -v eza >/dev/null; then
+    alias ls='eza -lah --icons=always'
+    alias ll='eza -lah --icons=always'
 fi
 
 alias oc="opencode --continue --port"
