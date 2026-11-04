@@ -87,8 +87,8 @@ hl.bind(mainMod .. " + g", hl.dsp.layout("splith"))
 hl.bind(mainMod .. " + t", hl.dsp.layout("splittoggle"))
 
 -- Layout switching
-hl.bind(mainMod .. " + SHIFT + d", hl.dsp.exec_cmd("hyprctl keyword general:layout dwindle"))
-hl.bind(mainMod .. " + SHIFT + i", hl.dsp.exec_cmd("hyprctl keyword general:layout lua:i3"))
+hl.bind(mainMod .. " + SHIFT + d", function() hl.config({ general = { layout = "dwindle" } }) end)
+hl.bind(mainMod .. " + SHIFT + i", function() hl.config({ general = { layout = "lua:i3" } }) end)
 
 -- Mouse binds (draggable windows with SUPER + mouse)
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })

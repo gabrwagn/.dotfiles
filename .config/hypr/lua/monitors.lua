@@ -30,8 +30,12 @@ if host.is_laptop then
         -- Hyprland 0.56.2 segfaults in CMonitor::changeWorkspace when a
         -- workspace dispatcher targets a workspace whose monitor is gone
         -- (crash report 1707, 2026-09-09: undocked, then SUPER+<n>).
+        -- Only existing workspaces: moving a missing one logs a "Workspace
+        -- not found" warning, and at config load none exist yet.
         for i = 1, 10 do
-            hl.dispatch(hl.dsp.workspace.move({ workspace = i, monitor = output }))
+            if hl.get_workspace(i) then
+                hl.dispatch(hl.dsp.workspace.move({ workspace = i, monitor = output }))
+            end
         end
     end
 
@@ -53,7 +57,7 @@ if host.is_laptop then
                 scale    = 1.5,
                 mirror   = "none",
             })
-            hl.dispatch(hl.dsp.dpms("on", "eDP-1"))
+            hl.dispatch(hl.dsp.dpms({ action = "on", monitor = "eDP-1" }))
             pull_workspaces("eDP-1")
         end
     end

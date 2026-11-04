@@ -25,7 +25,7 @@ hl.config({
 
         touchpad = {
             natural_scroll       = true,
-            clickfinger_behavior = 1,
+            clickfinger_behavior = true,
         },
     },
 
@@ -145,7 +145,7 @@ hl.config({
     },
 })
 
-hl.notification.create({ text = "Config reloaded", duration = 3000 })
+hl.notification.create({ text = "Config reloaded", timeout = 3000 })
 
 
 -- For Noctalia Color templates
