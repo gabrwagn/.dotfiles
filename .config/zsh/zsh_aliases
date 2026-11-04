@@ -33,7 +33,7 @@ if command -v eza >/dev/null; then
     alias ll='eza -lah --icons=always'
 fi
 
-alias oc="opencode --continue --port"
+alias oc="opencode --continue"
 
 # fastfetch has no config.jsonc here, so the noctalia palette has to be passed
 # explicitly. Partial configs merge over the defaults, and the theme file only
