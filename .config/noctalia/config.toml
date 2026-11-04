@@ -86,6 +86,10 @@ popup_borders       = false
 # Register noctalia as the session's polkit agent; nothing else provides one
 # here, so without it pkexec prompts have nowhere to render.
 polkit_agent        = true
+# Start launcher/dock/taskbar apps in their own uwsm scope, like the Hyprland
+# keybinds do. Otherwise they share noctalia's cgroup, and an OOM kill in any
+# of them takes down the bar and everything else launched from it.
+launch_apps_custom_command = "uwsm app -- $CMD"
 
 [shell.shadow]
 alpha = 0.55
