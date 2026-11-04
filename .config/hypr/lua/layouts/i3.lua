@@ -369,7 +369,8 @@ end
 ---   1. Same axis as move direction:
 ---      a. Not at edge → shift position within children list.
 ---      b. At edge → pop out (keep walking up).
----   2. Cross-axis → keep walking up.
+---   2. Cross-axis → keep walking up, remembering which side of the
+---      nearest one the window sits on.
 ---   3. Reached root → no-op if already at outermost edge; else detach
 ---      and prepend/append to root (or wrap if root is cross-axis).
 local function move_window_dir(ws, from_id, direction)
@@ -379,15 +380,12 @@ local function move_window_dir(ws, from_id, direction)
     local move_axis = (direction == "left" or direction == "right") and "h" or "v"
     local forward = (direction == "right" or direction == "down")
 
-    -- Record cross-axis position before walking.
-    -- If from_leaf's immediate parent is cross-axis, remember its index.
+    -- Cross-axis position, taken from the nearest cross-axis ancestor on the
+    -- way up (not only the immediate parent): the bottom eighth of a column
+    -- then lands under the window it moves into instead of beside it.
     local cross_axis = move_axis == "h" and "v" or "h"
-    local cross_index = nil  -- index within cross-axis parent (for position preservation)
+    local cross_index = nil  -- index within cross-axis ancestor (for position preservation)
     local cross_count = nil
-    if from_leaf.parent and from_leaf.parent.dir == cross_axis then
-        cross_index = child_index(from_leaf.parent, from_leaf)
-        cross_count = #from_leaf.parent.children
-    end
 
     local node = from_leaf
     while node.parent do
@@ -463,6 +461,9 @@ local function move_window_dir(ws, from_id, direction)
                 return
             end
             -- At edge: pop out
+        elseif not cross_index then
+            cross_index = child_index(p, node)
+            cross_count = #p.children
         end
         -- Cross-axis or popping out: walk up
         node = p
