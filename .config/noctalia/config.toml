@@ -65,6 +65,15 @@ auto_locate = true
 [nightlight]
 enabled = true
 
+# Battery: the only sysmon widget is the bar's `ram`, so sample memory alone,
+# slowly. 0 turns a metric group off entirely (no sampling, no wakeups); the
+# Control Center System tab shows CPU, network and disk as unavailable.
+[system.monitor]
+cpu_poll_seconds     = 0
+network_poll_seconds = 0
+disk_poll_seconds    = 0
+memory_poll_seconds  = 10
+
 # Keep noctalia's own rounding on panels and popups; only the font is carried
 # over from the old waybar/rofi look.
 [shell]

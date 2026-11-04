@@ -36,7 +36,10 @@ noctalia.runStream("pactl subscribe", function(line)
     end
 end)
 
+-- Safety net only: `pactl subscribe` above catches every change. At the
+-- default tick this spawned pactl four times a second and kept PipeWire busy.
 function update()
+    noctalia.setUpdateInterval(60000)
     refresh()
 end
 
