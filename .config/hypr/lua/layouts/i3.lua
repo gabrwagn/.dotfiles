@@ -25,7 +25,9 @@ local function ws_key(ctx)
     for _, target in ipairs(ctx.targets) do
         local w = target.window
         if w and w.workspace then
-            return tostring(w.workspace.id)
+            -- Hyprland 0.57 leaves `id` nil on special and named workspaces,
+            -- which would merge them all into one tree.
+            return w.workspace.addressable_name or tostring(w.workspace.id)
         end
     end
     return "_default"
