@@ -38,7 +38,7 @@ local function get_ws(ctx)
     if not workspaces[key] then
         workspaces[key] = { root = nil, boxes = {}, leaves = {} }
     end
-    return workspaces[key]
+    return workspaces[key], key
 end
 
 -----------------------------
@@ -593,6 +593,184 @@ local function equalize_tree(node)
 end
 
 -----------------------------
+-- Persistence             --
+-----------------------------
+
+-- A config reload (any save under ~/.config/hypr, or noctalia re-rendering
+-- noctalia.lua on a theme switch) restarts the Lua state, which used to drop
+-- every tree and rebuild each workspace as one flat row. Trees are saved to
+-- the Hyprland instance's runtime dir after each recalculate and restored on
+-- load. Stable ids survive a reload but not a restart, and a restart gets a
+-- new instance dir, so a stale file is never read.
+
+local state_path
+do
+    local runtime  = os.getenv("XDG_RUNTIME_DIR")
+    local instance = os.getenv("HYPRLAND_INSTANCE_SIGNATURE")
+    if runtime and instance then
+        state_path = runtime .. "/hypr/" .. instance .. "/i3-trees.lua"
+    end
+end
+
+-- Saved trees not yet adopted, keyed like `workspaces`. After a reload
+-- Hyprland hands the windows back one at a time, recalculating after each,
+-- so a workspace is laid out from a pruned copy of its saved tree until all
+-- saved windows are back or an unknown one shows up.
+local restored = {}
+local last_saved = nil
+
+--- Serialize a live or saved tree (both carry id / dir / ratios / children).
+local function serialize_node(node, out)
+    if node.id then
+        out[#out + 1] = string.format("{id=%q}", node.id)
+        return
+    end
+    out[#out + 1] = string.format("{dir=%q,", node.dir)
+    if node.ratios then
+        out[#out + 1] = "ratios={"
+        for _, r in ipairs(node.ratios) do
+            out[#out + 1] = string.format("%q,", r)
+        end
+        out[#out + 1] = "},"
+    end
+    out[#out + 1] = "children={"
+    for _, c in ipairs(node.children) do
+        serialize_node(c, out)
+        out[#out + 1] = ","
+    end
+    out[#out + 1] = "}}"
+end
+
+local function save_state()
+    if not state_path then return end
+
+    local trees = {}
+    for key, ws in pairs(workspaces) do
+        if ws.root and key ~= "_default" then trees[key] = ws.root end
+    end
+    -- Pending trees win: the live one is only a pruned copy until adopted.
+    for key, saved in pairs(restored) do
+        trees[key] = saved.tree
+    end
+
+    local keys = {}
+    for key in pairs(trees) do keys[#keys + 1] = key end
+    table.sort(keys)
+
+    local out = { "return {" }
+    for _, key in ipairs(keys) do
+        out[#out + 1] = string.format("[%q]=", key)
+        serialize_node(trees[key], out)
+        out[#out + 1] = ","
+    end
+    out[#out + 1] = "}"
+
+    local text = table.concat(out)
+    if text == last_saved then return end
+
+    -- Write-then-rename, so a crash mid-write never leaves half a file.
+    local tmp = state_path .. ".tmp"
+    local f = io.open(tmp, "w")
+    if not f then return end
+    f:write(text)
+    f:close()
+    if os.rename(tmp, state_path) then
+        last_saved = text
+    end
+end
+
+local function count_saved_leaves(node, ids)
+    if node.id then
+        ids[node.id] = true
+        return 1
+    end
+    local n = 0
+    for _, c in ipairs(node.children) do
+        n = n + count_saved_leaves(c, ids)
+    end
+    return n
+end
+
+local function load_state()
+    if not state_path then return end
+    local f = io.open(state_path, "r")
+    if not f then return end
+    local text = f:read("a")
+    f:close()
+
+    local chunk = text and load(text, "=i3-trees", "t", {})
+    if not chunk then return end
+    local ok, trees = pcall(chunk)
+    if not ok or type(trees) ~= "table" then return end
+
+    for key, tree in pairs(trees) do
+        local ids = {}
+        local counted, count = pcall(count_saved_leaves, tree, ids)
+        if counted and count > 0 then
+            restored[key] = { tree = tree, ids = ids, count = count }
+        end
+    end
+    last_saved = text
+end
+
+--- Rebuild a saved tree with only the windows in `present`. Emptied
+--- containers vanish and single children collapse, as in remove_leaf.
+local function rebuild(node, present, leaves)
+    if node.id then
+        if not present[node.id] then return nil end
+        local leaf = make_leaf(node.id)
+        leaves[node.id] = leaf
+        return leaf
+    end
+
+    local children, ratios = {}, {}
+    for i, c in ipairs(node.children) do
+        local child = rebuild(c, present, leaves)
+        if child then
+            children[#children + 1] = child
+            ratios[#ratios + 1] = node.ratios and node.ratios[i]
+        end
+    end
+    if #children == 0 then return nil end
+    if #children == 1 then return children[1] end
+
+    local container = make_container(node.dir, children)
+    if node.ratios and #ratios == #children then
+        local sum = 0
+        for _, r in ipairs(ratios) do sum = sum + r end
+        if sum > 0 then
+            for i = 1, #ratios do ratios[i] = ratios[i] / sum end
+            container.ratios = ratios
+        end
+    end
+    return container
+end
+
+--- Lay a workspace out from its saved tree, pruned to the windows Hyprland
+--- has handed back so far. Adopted for good once every saved window is
+--- back, an unknown window appears, or `finish` is set.
+local function restore_step(ctx, ws, key, finish)
+    local saved = restored[key]
+    local present, seen, unknown = {}, 0, false
+    for _, target in ipairs(ctx.targets) do
+        local id = target_id(target)
+        present[id] = true
+        if saved.ids[id] then seen = seen + 1 else unknown = true end
+    end
+
+    local leaves = {}
+    local ok, root = pcall(rebuild, saved.tree, present, leaves)
+    if ok then
+        ws.root, ws.leaves = root, leaves
+    end
+    if finish or unknown or seen == saved.count or not ok then
+        restored[key] = nil
+    end
+end
+
+load_state()
+
+-----------------------------
 -- Focus new windows       --
 -----------------------------
 
@@ -608,7 +786,8 @@ end)
 
 hl.layout.register("i3", {
     recalculate = function(ctx)
-        local ws = get_ws(ctx)
+        local ws, key = get_ws(ctx)
+        if restored[key] then restore_step(ctx, ws, key) end
 
         if #ctx.targets == 0 then
             ws.root = nil
@@ -620,10 +799,12 @@ hl.layout.register("i3", {
         local targets = sync_tree(ctx, ws)
         ws.boxes = {}
         place_tree(ctx, ws.root, ctx.area, targets, ws)
+        save_state()
     end,
 
     layout_msg = function(ctx, msg)
-        local ws = get_ws(ctx)
+        local ws, key = get_ws(ctx)
+        if restored[key] then restore_step(ctx, ws, key, true) end
         local focused = active_id(ctx)
         local command, arg = msg:match("^(%S+)%s*(.*)$")
 
