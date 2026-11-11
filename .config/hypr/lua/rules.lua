@@ -84,7 +84,7 @@ hl.window_rule({
 
 -- Terminal file chooser
 hl.window_rule({
-    match = { class = "^(Alacritty)$", title = "^(termfilechooser)$" },
+    match = { class = "^(Alacritty|kitty)$", title = "^(termfilechooser)$" },
     float = true,
     size  = "800 600",
     center = true,

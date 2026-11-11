@@ -24,7 +24,7 @@
   "clock": {
     "format": " {:%H:%M}",
     "tooltip": "{:%A, %d %B %Y}",
-    "on-click": "alacritty -e calcurse"
+    "on-click": "kitty calcurse"
   },
   "network": {
     "format": "{icon}",
@@ -92,7 +92,7 @@
     "exec": "~/.config/waybar/custom/memory.sh",
     "return-type": "json",
     "interval": 5,
-    "on-click": "alacritty -e btop"
+    "on-click": "kitty btop"
   },
   "custom/bluetooth": {
     "exec": "~/.config/waybar/custom/bluetooth.sh",

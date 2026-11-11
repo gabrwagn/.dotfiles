@@ -29,5 +29,5 @@ hl.on("hyprland.start", function()
     else
         hl.exec_cmd("[workspace 2 silent] uwsm app -- firefox")
     end
-    hl.exec_cmd("[workspace 1 silent] uwsm app -- alacritty")
+    hl.exec_cmd("[workspace 1 silent] uwsm app -- kitty")
 end)

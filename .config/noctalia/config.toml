@@ -47,7 +47,7 @@ enable_community_templates = true
 # colour, dim the disabled row) rather than patching the packaged template.
 #
 # qt5ct is unconfigured and QT_QPA_PLATFORMTHEME=qt6ct (hypr/lua/vars.lua:10).
-builtin_ids   = ["alacritty", "gtk3", "gtk4", "hyprland"]
+builtin_ids   = ["alacritty", "gtk3", "gtk4", "hyprland", "kitty"]
 # "neovim" deliberately absent. nvim has a hand-written theme (init.lua ->
 # lua/colors.lua -> lua/colors/paradise.lua, both tracked). The template's
 # apply.sh guards on the string "base16-nvim", but plugins/colors.lua declares
@@ -108,7 +108,7 @@ app_grid                  = false
 show_icons                = false
 show_app_origin_indicator = false
 sort_by_usage             = false
-pinned                    = ["Alacritty"]
+pinned                    = ["kitty"]
 
 # Wallpaper lives in the control center's shortcut grid instead of the bar.
 # There is no wallpaper *tab* in the control center catalog (home, audio,

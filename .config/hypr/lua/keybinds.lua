@@ -6,7 +6,7 @@ local ipc     = "noctalia msg "
 
 
 -- Terminal
-hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd("uwsm app -- alacritty"))
+hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd("uwsm app -- kitty"))
 
 -- Browser
 
