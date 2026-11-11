@@ -13,5 +13,6 @@ if [[ "$(hostname)" == "nausicaa" ]]; then
     export JIRA_URL="https://timeedit.atlassian.net"
     export JIRA_EMAIL="gabriel.wagner@timeedit.com"
     export JIRA_API_TOKEN="$(secret-tool lookup service jira key api-token)"
+    export README_API_KEY="$(secret-tool lookup service readme key api-token)"
 fi
 
