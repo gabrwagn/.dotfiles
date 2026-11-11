@@ -28,18 +28,22 @@ hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
 -- Lock screen
 hl.bind("ALT + l", hl.dsp.exec_cmd(ipc .. "session lock"))
 
--- Blind recovery: force the laptop panel back on. Undocking has left the
--- machine with no enabled output before, which is otherwise only escapable
--- by holding the power button.
--- hl.bind(mainMod .. " + CTRL + SHIFT + R", hl.dsp.exec_cmd(
---     "hyprctl eval 'hl.monitor({ output = \"eDP-1\", disabled = false, mode = \"preferred\", position = \"0x0\", scale = 1.5 })' ; sleep 0.5 ; " ..
---     "hyprctl dispatch 'hl.dsp.dpms(\"on\", \"eDP-1\")' ; " ..
---     "brightnessctl -d apple-panel-bl set 50%"
--- ))
+-- Blind recovery: re-run the dock/undock logic from monitors.lua for the
+-- current HDMI state. Undocking has left the machine with no enabled output
+-- before, which is otherwise only escapable by holding the power button.
+hl.bind(mainMod .. " + SHIFT + R", function()
+    if _G.__set_docked then
+        local docked = hl.get_monitor("HDMI-A-1") ~= nil
+        _G.__set_docked(docked)
+        if not docked then
+            hl.dispatch(hl.dsp.exec_cmd("brightnessctl -d apple-panel-bl set 50%"))
+        end
+    end
+end)
 
 -- Blind recovery: bounce to VT 3 and back to unwedge apple-dcp after an HDMI
 -- hotplug or resume. Replaces logging out; see scripts/fix-display.
-hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("~/.config/hypr/scripts/fix-display"))
+-- hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("~/.config/hypr/scripts/fix-display"))
 
 -- Notification history
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(ipc .. "panel-toggle control-center notifications"))

@@ -59,18 +59,39 @@ if host.is_laptop then
             })
             hl.dispatch(hl.dsp.dpms({ action = "on", monitor = "eDP-1" }))
             pull_workspaces("eDP-1")
+
+            -- The first modeset after panel power-on is rejected by DCP
+            -- firmware (set_digital_out_mode returned 8000000a) because the
+            -- panel asserts HPD only afterwards; the driver does not retry,
+            -- so the panel stays black while Hyprland thinks it is on.
+            -- Disable/enable does not help (it power-cycles the panel again).
+            -- Bouncing the refresh rate while enabled re-issues the modeset
+            -- to an awake panel. Verified 2026-11-06.
+            hl.timer(function()
+                if hl.get_monitor("HDMI-A-1") then return end
+                local function edp(mode)
+                    hl.monitor({ output = "eDP-1", disabled = false, mode = mode,
+                                 position = "0x0", scale = 1.5, mirror = "none" })
+                end
+                edp("3024x1890@60")
+                hl.timer(function()
+                    if hl.get_monitor("HDMI-A-1") then return end
+                    edp("preferred")
+                end, { timeout = 500, type = "oneshot" })
+            end, { timeout = 1500, type = "oneshot" })
         end
     end
 
+    _G.__set_docked = set_docked
     set_docked(hl.get_monitor("HDMI-A-1") ~= nil)
 
     if not _G.__laptop_mon_registered then
         _G.__laptop_mon_registered = true
         hl.on("monitor.added", function(m)
-            if m and m.name == "HDMI-A-1" then set_docked(true) end
+            if m and m.name == "HDMI-A-1" then _G.__set_docked(true) end
         end)
         hl.on("monitor.removed", function(m)
-            if m and m.name == "HDMI-A-1" then set_docked(false) end
+            if m and m.name == "HDMI-A-1" then _G.__set_docked(false) end
         end)
     end
 
