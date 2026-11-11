@@ -24,7 +24,7 @@
   "clock": {
     "format": " {:%H:%M}",
     "tooltip": "{:%A, %d %B %Y}",
-    "on-click": "kitty calcurse"
+    "on-click": "$TERMINAL -e calcurse"
   },
   "network": {
     "format": "{icon}",
@@ -92,7 +92,7 @@
     "exec": "~/.config/waybar/custom/memory.sh",
     "return-type": "json",
     "interval": 5,
-    "on-click": "kitty btop"
+    "on-click": "$TERMINAL -e btop"
   },
   "custom/bluetooth": {
     "exec": "~/.config/waybar/custom/bluetooth.sh",

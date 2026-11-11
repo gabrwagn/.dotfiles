@@ -108,7 +108,7 @@ app_grid                  = false
 show_icons                = false
 show_app_origin_indicator = false
 sort_by_usage             = false
-pinned                    = ["kitty"]
+pinned                    = ["Alacritty", "kitty"]
 
 # Wallpaper lives in the control center's shortcut grid instead of the bar.
 # There is no wallpaper *tab* in the control center catalog (home, audio,
