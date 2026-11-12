@@ -28,12 +28,19 @@ alias zshrc='vim --cmd "cd ~/.config/zsh/"'
 alias reloadzshrc='echo "reloading .zshrc" && source ~/.config/zsh/.zshrc'
 alias rm='rm -i'               # Prompt before deleting files
 
-if command -v exa >/dev/null; then
-    alias ls='exa -lah --icons'
-    alias ll='exa -lah --icons'
+if command -v eza >/dev/null; then
+    alias ls='eza -lah --icons=always'
+    alias ll='eza -lah --icons=always'
 fi
 
-alias oc="opencode --continue --port"
+alias oc="opencode --continue"
+
+# fastfetch has no config.jsonc here, so the noctalia palette has to be passed
+# explicitly. Partial configs merge over the defaults, and the theme file only
+# sets logo/display colours, so the default module list is preserved.
+if command -v fastfetch >/dev/null; then
+    alias fastfetch='fastfetch --config ~/.config/fastfetch/themes/noctalia.jsonc'
+fi
 
 # Host-specific aliases
 if [[ "$(hostname)" == "mononoke" ]]; then

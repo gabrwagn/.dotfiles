@@ -25,29 +25,27 @@ hl.window_rule({
 hl.workspace_rule({ workspace = "m[HDMI-A-1]", gaps_out = 12 })
 
 -- Layer rules
+-- Blur behind noctalia's shell surfaces. Compositor blur stays off for regular
+-- windows; this is the closest thing to the fullscreen dim rofi used to draw.
 hl.layer_rule({
-    match = { namespace = "rofi" },
-    blur  = true,
-  ignore_alpha = 0.3,
-})
--- hl.layer_rule({
---     match = { namespace = "waybar" },
---     blur  = true,
--- })
-hl.layer_rule({
-    match        = { namespace = "swaync-control-center" },
+    match        = { namespace = "^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd|window-switcher)$" },
     blur         = true,
-    ignore_alpha = 0.1,
-})
-hl.layer_rule({
-    match        = { namespace = "swaync-notification-window" },
-    blur         = true,
-    ignore_alpha = 0.1,
+    blur_popups  = true,
+    ignore_alpha = 0.5,
+    no_anim      = true,
 })
 
 ---------------------------------
 ---- APPLICATION-SPECIFIC -------
 ---------------------------------
+
+-- Noctalia settings window
+hl.window_rule({
+    match  = { class = "^(dev.noctalia.Noctalia)$" },
+    float  = true,
+    size   = "1080 920",
+    center = true,
+})
 
 -- Firefox
 hl.window_rule({
@@ -86,7 +84,7 @@ hl.window_rule({
 
 -- Terminal file chooser
 hl.window_rule({
-    match = { class = "^(Alacritty)$", title = "^(termfilechooser)$" },
+    match = { class = "^(Alacritty|kitty)$", title = "^(termfilechooser)$" },
     float = true,
     size  = "800 600",
     center = true,

@@ -2,37 +2,65 @@
 
 local mainMod = "SUPER"
 local host    = require("lua.host")
+local ipc     = "noctalia msg "
 
-local browser  = host.is_laptop and "helium" or "firefox"
 
 -- Terminal
-hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd("uwsm app -- alacritty"))
+hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd("uwsm app -- " .. host.terminal))
 
 -- Browser
-hl.bind(mainMod .. " + b", hl.dsp.exec_cmd("uwsm app -- " .. browser))
 
 -- Application launcher
-hl.bind(mainMod .. " + Space", hl.dsp.exec_cmd("uwsm app -- rofi -show drun -theme $HOME/.config/rofi/paradise.rasi -run-command 'zsh -ic \"{cmd}\"'"))
+hl.bind(mainMod .. " + Space", hl.dsp.exec_cmd(ipc .. "panel-toggle launcher"))
+
+-- Noctalia shell surfaces
+hl.bind(mainMod .. " + S",         hl.dsp.exec_cmd(ipc .. "panel-toggle control-center"))
+hl.bind(mainMod .. " + C",         hl.dsp.exec_cmd(ipc .. "panel-toggle control-center calendar"))
+hl.bind(mainMod .. " + W",         hl.dsp.exec_cmd(ipc .. "panel-toggle control-center network"))
+hl.bind(mainMod .. " + B",         hl.dsp.exec_cmd(ipc .. "panel-toggle control-center bluetooth"))
+hl.bind(mainMod .. " + comma",     hl.dsp.exec_cmd(ipc .. "settings-toggle"))
+hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd(ipc .. "panel-toggle clipboard"))
+hl.bind("ALT + Tab",               hl.dsp.exec_cmd(ipc .. "window-switcher"))
 
 -- Window management
 hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
-hl.bind(mainMod .. " + B", hl.dsp.layout("splitratio exact 0.5"))
 
 -- Lock screen
-hl.bind("ALT + l", hl.dsp.exec_cmd("uwsm app -- ~/.config/hypr/scripts/lock"))
+hl.bind("ALT + l", hl.dsp.exec_cmd(ipc .. "session lock"))
 
--- Notification panel
-hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t"))
+-- Blind recovery: re-run the dock/undock logic from monitors.lua for the
+-- current HDMI state. Undocking has left the machine with no enabled output
+-- before, which is otherwise only escapable by holding the power button.
+hl.bind(mainMod .. " + SHIFT + R", function()
+    if _G.__monitors_apply then
+        _G.__monitors_apply(true)
+        if not hl.get_monitor("HDMI-A-1") then
+            hl.dispatch(hl.dsp.exec_cmd("brightnessctl -d apple-panel-bl set 50%"))
+        end
+    end
+end)
 
--- Multimedia keys
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("~/.config/hypr/scripts/volume.sh up"),   { repeating = true })
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("~/.config/hypr/scripts/volume.sh down"),  { repeating = true })
-hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("~/.config/hypr/scripts/volume.sh mute"),  { locked = true })
+-- Blind recovery: bounce to VT 3 and back to unwedge apple-dcp after an HDMI
+-- hotplug or resume. Replaces logging out; see scripts/fix-display.
+-- hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("~/.config/hypr/scripts/fix-display"))
+
+-- Notification history
+hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(ipc .. "panel-toggle control-center notifications"))
+hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd(ipc .. "notification-clear-active && " .. ipc .. "notification-clear-history"))
+
+-- Screenshots (saved to ~/Pictures/Screenshots and copied to the clipboard)
+hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd(ipc .. "screenshot-fullscreen"))
+hl.bind(mainMod .. " + CTRL + P",  hl.dsp.exec_cmd(ipc .. "screenshot-region"))
+
+-- Multimedia keys (noctalia handles the OSD)
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(ipc .. "volume-up"),   { repeating = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(ipc .. "volume-down"), { repeating = true })
+hl.bind("XF86AudioMute",        hl.dsp.exec_cmd(ipc .. "volume-mute"), { locked = true })
 hl.bind("XF86AudioPlay",        hl.dsp.exec_cmd("playerctl play-pause"))
 hl.bind("XF86AudioNext",        hl.dsp.exec_cmd("playerctl next"))
 hl.bind("XF86AudioPrev",        hl.dsp.exec_cmd("playerctl previous"))
 
--- Brightness controls
+-- Brightness controls (script changes the panel, noctalia draws the OSD)
 hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("~/.config/hypr/scripts/brightness.sh up"),   { repeating = true })
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("~/.config/hypr/scripts/brightness.sh down"), { repeating = true })
 
@@ -66,8 +94,8 @@ hl.bind(mainMod .. " + g", hl.dsp.layout("splith"))
 hl.bind(mainMod .. " + t", hl.dsp.layout("splittoggle"))
 
 -- Layout switching
-hl.bind(mainMod .. " + SHIFT + d", hl.dsp.exec_cmd("hyprctl keyword general:layout dwindle"))
-hl.bind(mainMod .. " + SHIFT + i", hl.dsp.exec_cmd("hyprctl keyword general:layout lua:i3"))
+hl.bind(mainMod .. " + SHIFT + d", function() hl.config({ general = { layout = "dwindle" } }) end)
+hl.bind(mainMod .. " + SHIFT + i", function() hl.config({ general = { layout = "lua:i3" } }) end)
 
 -- Mouse binds (draggable windows with SUPER + mouse)
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
@@ -92,10 +120,10 @@ hl.define_submap("resize", function()
     hl.bind("Return", hl.dsp.submap("reset"))
 end)
 
--- System menu with rofi
-hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("uwsm app -- rofi -show power-menu -theme ~/.config/rofi/paradise.rasi -modi power-menu:~/.config/rofi/rofi-power-menu"))
+-- Session menu
+hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd(ipc .. "panel-toggle session"))
 if host.is_laptop then
-    hl.bind("XF86PowerOff", hl.dsp.exec_cmd("uwsm app -- rofi -show power-menu -theme ~/.config/rofi/paradise.rasi -modi power-menu:~/.config/rofi/rofi-power-menu"))
+    hl.bind("XF86PowerOff", hl.dsp.exec_cmd(ipc .. "panel-toggle session"))
 end
 
 -- Fullscreen

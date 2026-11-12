@@ -1,0 +1,165 @@
+# Noctalia shell configuration.
+# Hand-written base layer; GUI changes land in ~/.local/state/noctalia/settings.toml
+# and override anything set here.
+
+[theme]
+mode              = "dark"
+source            = "custom"
+custom_palette    = "Paradise"
+builtin           = "Catppuccin"
+# community_palette deliberately unset: the community catalog ships its own
+# Paradise, which differs from the custom one in palettes/Paradise.json. Only
+# the custom copy has the hand-tuned light variant.
+
+# theme.source / palette selection is daemon-owned: noctalia writes its live
+# choice back into the state file, so the values here only seed a fresh state
+# dir. Change it at runtime with `noctalia msg color-scheme-set custom Paradise`.
+
+# Enabled. The 2026-09-09 alacritty.toml corruption was not a template-system
+# problem: templates/alacritty/apply.sh injects its import with the sed range
+# `/^import\s*=\s*\[/,/\]/`, and a sed range cannot close on the line it opened.
+# With a single-line `import = [...]` the range stayed open to the next line
+# holding a `]` -- `[font]` -- and rewrote that too.
+#
+# Two independent guards now: alacritty.toml keeps a multi-line import array,
+# and it contains the string "noctalia.toml", which makes apply.sh take its
+# short-circuit branch (a verified no-op on our file).
+#
+# The hyprland template appends `require("noctalia").apply_theme()` to
+# hyprland.lua once, guarded by grep -qF. Idempotent, and committed.
+#
+# Every rendered output (themes/noctalia.toml, gtk-*/noctalia.css,
+# hypr/noctalia.lua, qt*ct/colors/noctalia.conf, fzf, fastfetch) is an
+# untracked plain file, deliberately not stowed -- generated output does not
+# belong in the repo.
+[theme.templates]
+enable_builtin_templates   = true
+enable_community_templates = true
+# "qt" is off until the mapping is worth fixing. The builtin template hardcodes
+# light/midlight/dark/mid as #ffffff/#cacaca/#9f9f9f/#b8b8b8 instead of deriving
+# them, so every palette gets light bevels, and its active/disabled/inactive rows
+# are byte-identical, so disabled widgets never dim. qt6ct.conf therefore still
+# points at the hand-tuned colors/paradise.conf.
+#
+# Tradeoff: paradise.conf is static, so a theme switch leaves Qt behind. The fix
+# when that matters is a hooks.colors_changed script that repairs the generated
+# noctalia.conf (keep its accent roles, derive the four shades from the window
+# colour, dim the disabled row) rather than patching the packaged template.
+#
+# qt5ct is unconfigured and QT_QPA_PLATFORMTHEME=qt6ct (hypr/lua/vars.lua:10).
+builtin_ids   = ["alacritty", "gtk3", "gtk4", "hyprland", "kitty"]
+# "neovim" deliberately absent. nvim has a hand-written theme (init.lua ->
+# lua/colors.lua -> lua/colors/paradise.lua, both tracked). The template's
+# apply.sh guards on the string "base16-nvim", but plugins/colors.lua declares
+# the pre-rename "RRethy/nvim-base16", so the guard misses it and it installs a
+# second base16-colorscheme.setup() call.
+#
+# Tested and rejected rather than assumed: the template can only emit colours
+# present as M3 roles, and Paradise has no role for base03/base0B/base0C/base0E,
+# so the 16-colour scheme cannot be reproduced by remapping the template.
+community_ids = ["opencode", "discord", "steam", "fastfetch", "fzf"]
+
+[location]
+auto_locate = true
+
+[nightlight]
+enabled = true
+
+# Battery: the only sysmon widget is the bar's `ram`, so sample memory alone,
+# slowly. 0 turns a metric group off entirely (no sampling, no wakeups); the
+# Control Center System tab shows CPU, network and disk as unavailable.
+[system.monitor]
+cpu_poll_seconds     = 0
+network_poll_seconds = 0
+disk_poll_seconds    = 0
+memory_poll_seconds  = 10
+
+# Keep noctalia's own rounding on panels and popups; only the font is carried
+# over from the old waybar/rofi look.
+[shell]
+corner_radius_scale = 1.0
+font_family         = "JetBrains Mono"
+password_style      = "default"
+input_borders       = false
+card_borders        = false
+popup_borders       = false
+# Register noctalia as the session's polkit agent; nothing else provides one
+# here, so without it pkexec prompts have nowhere to render.
+polkit_agent        = true
+# Start launcher/dock/taskbar apps in their own uwsm scope, like the Hyprland
+# keybinds do. Otherwise they share noctalia's cgroup, and an OOM kill in any
+# of them takes down the bar and everything else launched from it.
+launch_apps_custom_command = "uwsm app -- $CMD"
+
+[shell.shadow]
+alpha = 0.55
+
+[shell.panel]
+transparency_mode = "glass"
+borders           = true
+shadow            = true
+launcher_placement = "attached"
+
+# Attached to the bar, plain text rows, no icons or usage-based reordering.
+[shell.launcher]
+categories                = false
+compact                   = false
+app_grid                  = false
+show_icons                = false
+show_app_origin_indicator = false
+sort_by_usage             = false
+pinned                    = ["Alacritty", "kitty"]
+
+# Wallpaper lives in the control center's shortcut grid instead of the bar.
+# There is no wallpaper *tab* in the control center catalog (home, audio,
+# bluetooth, calendar, media, monitor, network, notifications, power,
+# screen-time, system, weather), so this is the closest equivalent: the
+# shortcut opens the same wallpaper panel the bar widget did.
+# Declaring the array replaces the default set, so it is listed in full.
+[control_center]
+[[control_center.shortcuts]]
+type = "wifi"
+
+[[control_center.shortcuts]]
+type = "bluetooth"
+
+[[control_center.shortcuts]]
+type = "wallpaper"
+
+[[control_center.shortcuts]]
+type = "caffeine"
+
+[[control_center.shortcuts]]
+type = "nightlight"
+
+[[control_center.shortcuts]]
+type = "notification"
+
+[[control_center.shortcuts]]
+type = "power_profile"
+
+[wallpaper]
+directory = "~/.local/share/wallpapers"
+fill_mode = "crop"
+
+[wallpaper.default]
+path = "~/.local/share/wallpapers/bg.png"
+
+# Auto-detection does not associate the Apple panel backlight with eDP-1,
+# and the HDMI TV speaks no DDC/CI, so both are pinned explicitly.
+[brightness]
+enable_ddcutil = false
+
+[brightness.monitor.eDP-1]
+backend          = "backlight"
+backlight_device = "apple-panel-bl"
+
+[brightness.monitor.HDMI-A-1]
+backend = "none"
+
+# Off: on noctalia 5.0.1 an auto-sync only produces an admin prompt and then
+# fails, because it invokes the helper through run0 with the legacy positional
+# syntax and stages [[session.actions]], both rejected by the constrained
+# helper. Sync by hand instead, see noctalia/greeter/install.sh.
+[shell.greeter_sync]
+auto_sync = false

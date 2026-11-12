@@ -1,0 +1,153 @@
+# Lock screen layout. The Settings editor writes these tables to the
+# app-managed state file; kept here so the layout survives a state wipe.
+# Edit visually with: noctalia msg lockscreen-widgets-edit
+#
+# The password field's focus ring cannot be turned off: focusRingWidth is a
+# compile-time constant in noctalia and its colour comes from the Secondary
+# palette role.
+
+[lockscreen_widgets]
+enabled = true
+schema_version = 2
+widget_order = [
+    "lockscreen-clock@HDMI-A-1",
+    "lockscreen-login-box@HDMI-A-1",
+    "lockscreen-clock@eDP-1",
+    "lockscreen-login-box@eDP-1",
+    "lockscreen-clock@FALLBACK",
+    "lockscreen-login-box@FALLBACK"
+]
+
+    [lockscreen_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [lockscreen_widgets.widget."lockscreen-clock@HDMI-A-1"]
+    box_height = 400
+    box_width = 704
+    cx = 1920.0
+    cy = 820.5
+    output = "HDMI-A-1"
+    placement_height = 2025
+    placement_width = 3840
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget."lockscreen-clock@HDMI-A-1".settings]
+        background_opacity = 0.0
+        background_radius = 0
+        format = "{:%-H:%M}"
+
+    [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1"]
+    box_height = 70
+    box_width = 336
+    cx = 1920.0
+    cy = 1012.5
+    output = "HDMI-A-1"
+    placement_height = 2025
+    placement_width = 3840
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@HDMI-A-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.0
+        background_radius = 0.0
+        center_password_text = true
+        input_opacity = 0.0
+        input_radius = 6.0
+        layout = "compact"
+        show_caps_lock = true
+        show_keyboard_layout = false
+        show_login_button = false
+        show_media = false
+        show_session_buttons = false
+        show_unlock_hint = false
+        show_weather = false
+
+    [lockscreen_widgets.widget."lockscreen-clock@eDP-1"]
+    box_height = 210
+    box_width = 370
+    cx = 1008.0
+    cy = 510.5
+    output = "eDP-1"
+    placement_height = 1260
+    placement_width = 2016
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget."lockscreen-clock@eDP-1".settings]
+        background_opacity = 0.0
+        background_radius = 0
+        format = "{:%-H:%M}"
+
+    [lockscreen_widgets.widget."lockscreen-login-box@eDP-1"]
+    box_height = 37
+    box_width = 176
+    cx = 1008.0
+    cy = 630.0
+    output = "eDP-1"
+    placement_height = 1260
+    placement_width = 2016
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@eDP-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.0
+        background_radius = 0.0
+        center_password_text = true
+        input_opacity = 0.0
+        input_radius = 6.0
+        layout = "compact"
+        show_caps_lock = true
+        show_keyboard_layout = false
+        show_login_button = false
+        show_media = false
+        show_session_buttons = false
+        show_unlock_hint = false
+        show_weather = false
+
+    [lockscreen_widgets.widget."lockscreen-clock@FALLBACK"]
+    box_height = 200
+    box_width = 352
+    cx = 960.0
+    cy = 437.6
+    output = "FALLBACK"
+    placement_height = 1080
+    placement_width = 1920
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget."lockscreen-clock@FALLBACK".settings]
+        background_opacity = 0.0
+        background_radius = 0
+        format = "{:%-H:%M}"
+
+    [lockscreen_widgets.widget."lockscreen-login-box@FALLBACK"]
+    box_height = 35
+    box_width = 168
+    cx = 960.0
+    cy = 540.0
+    output = "FALLBACK"
+    placement_height = 1080
+    placement_width = 1920
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@FALLBACK".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.0
+        background_radius = 0.0
+        center_password_text = true
+        input_opacity = 0.0
+        input_radius = 6.0
+        layout = "compact"
+        show_caps_lock = true
+        show_keyboard_layout = false
+        show_login_button = false
+        show_media = false
+        show_session_buttons = false
+        show_unlock_hint = false
+        show_weather = false

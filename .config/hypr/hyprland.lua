@@ -25,7 +25,7 @@ hl.config({
 
         touchpad = {
             natural_scroll       = true,
-            clickfinger_behavior = 1,
+            clickfinger_behavior = true,
         },
     },
 
@@ -69,9 +69,13 @@ hl.config({
         },
 
         blur = {
-            enabled  = false,
+            -- Windows are opaque, so this pass only ever renders behind
+            -- noctalia's translucent layer surfaces (see rules.lua). Without
+            -- it enabled globally, layer rules cannot blur at all and the
+            -- glass panels turn into unreadable see-through cards.
+            enabled  = true,
             size     = 3,
-            passes   = 1,
+            passes   = 2,
             vibrancy = 0.1696,
         },
     },
@@ -138,7 +142,21 @@ hl.config({
         disable_splash_rendering = true,
         mouse_move_enables_dpms  = true,
         key_press_enables_dpms   = true,
+        -- If the lock client dies, allow relocking from a TTY
+        -- (`noctalia msg session lock`) instead of logging out.
+        allow_session_lock_restore = true,
+    },
+
+    -- Render X11 clients at native pixel density instead of letting the
+    -- compositor upscale them by the 1.5 fractional scale (fixes grainy
+    -- Steam/Battle.net text; they run as Xwayland clients via muvm).
+    xwayland = {
+        force_zero_scaling = true,
     },
 })
 
-hl.notification.create({ text = "Config reloaded", duration = 3000 })
+hl.notification.create({ text = "Config reloaded", timeout = 3000 })
+
+
+-- For Noctalia Color templates
+require("noctalia").apply_theme()

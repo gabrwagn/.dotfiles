@@ -24,10 +24,10 @@ map({ "n", "v" }, "<leader>P", "\"+P", { desc = "Paste above from clipboard" })
 map('n', '<leader>ch', '<cmd>ClangdSwitchSourceHeader<cr>', { desc = "Switch Source/Header" })
 
 map('n', '<leader>gx', function()
-    if next(require('diffview.lib').views) == nil then
-      vim.cmd('DiffviewOpen')
-    else
+    if require('diffview.lib').get_current_view() then
       vim.cmd('DiffviewClose')
+    else
+      vim.cmd('DiffviewOpen')
     end
   end
 , { desc = "Git diff view"})

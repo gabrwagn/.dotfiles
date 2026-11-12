@@ -1,0 +1,144 @@
+# Bar layout, mirroring the old waybar module set but keeping noctalia's own
+# rounded geometry.
+#
+# custom/calendar is replaced by the native calendar service, see
+# calendar.toml. hyprland/submap comes back via the hypr-submap plugin.
+
+[plugins]
+enabled = ["k4n4t4/hypr-submap", "gabwag/audio-sink-icon"]
+
+[bar.default]
+position             = "top"
+thickness            = 30
+background_opacity   = 0.5
+radius               = 0
+radius_bottom_left   = 6
+radius_bottom_right  = 6
+concave_edge_corners = false
+margin_ends          = 4
+margin_edge          = 0
+border               = "outline_variant"
+border_width         = 0.0
+padding              = 12
+widget_spacing       = 5
+font_family          = "JetBrains Mono NL Medium"
+font_weight          = 300
+capsule              = true
+capsule_fill         = "on_primary"
+capsule_opacity      = 0.5
+capsule_padding      = 8.0
+capsule_thickness    = 1.0
+shadow               = false
+reserve_space        = true
+scale                = 1.0
+font_scale           = 1.15
+
+start  = ["workspaces", "submap"]
+center = ["audio_visualizer"]
+end    = [
+  "tray",
+  "keyboard_layout",
+  "bluetooth",
+  "ram",
+  "volume",
+  "sink_icon",
+  "network",
+  "notifications",
+  "battery",
+  "mouse_battery",
+  "theme_mode",
+  "clock",
+]
+
+# Match the compositor gaps: 4 on the laptop panel (theme.gaps_out) and 12 on
+# the TV (the m[HDMI-A-1] workspace rule in hypr/lua/rules.lua).
+[bar.default.monitor.hdmi]
+match       = "HDMI-A-1"
+margin_ends = 12
+
+[widget.ram]
+type = "sysmon"
+stat = "ram_used"
+scale      = 1.25
+show_value = false
+
+[widget.workspaces]
+active_pill_size    = 1.3
+inactive_pill_size  = 0.5
+pill_scale          = 0.7
+focused_color       = "error"
+occupied_color      = "on_surface_variant"
+focused_output_only = true
+hide_when_empty     = true
+show_icons          = false
+show_labels         = false
+style               = "regular"
+
+# The glyph sits visibly high in the plugged/full state, and glyph mode has no
+# alignment setting, so the widget only shows while actually on battery.
+[widget.battery]
+hide_when_plugged = true
+scale             = 1.25
+show_label        = false
+
+# Mouse battery. There is no hide-when-absent option, so this can read stale
+# while the mouse is off.
+[widget.mouse_battery]
+type           = "battery"
+device         = "/org/freedesktop/UPower/devices/battery_hidpp_battery_0"
+hide_when_full = true
+
+# Headphones glyph while a bluetooth sink is active (local plugin).
+[widget.sink_icon]
+type = "gabwag/audio-sink-icon:sink-icon"
+
+[widget.audio_visualizer]
+bands = 15
+width = 123
+color_2 = "on_surface_variant"
+scale   = 1.15
+
+# Only visible while a submap is active, like waybar's hyprland/submap.
+[widget.submap]
+type              = "k4n4t4/hypr-submap:hypr-submap"
+hide_when_default = true
+glyph             = "keyboard"
+
+[widget.clock]
+format         = "{:%H:%M}"
+tooltip_format = "{:%A, %d %B %Y}"
+
+# Dark/light switch. Paradise carries both variants (palettes/Paradise.json),
+# so this flips the whole palette plus every rendered template.
+[widget.theme_mode]
+scale = 1.25
+
+[widget.keyboard_layout]
+display                 = "short"
+hide_when_single_layout = true
+font_scale = 0.85
+show_glyph = false
+
+# Show the active VPN next to the network glyph. Requires the tunnel to be a
+# real NetworkManager profile -- a wg-quick interface shows up as
+# "connected (externally)" and NM cannot toggle it.
+[widget.network]
+show_vpn_label = true
+scale          = 1.25
+show_label     = false
+
+# Glyph sizing and label suppression, promoted from the Settings UI state file
+# so the bar survives a state wipe.
+[widget.volume]
+scale      = 1.25
+show_label = false
+
+[widget.bluetooth]
+scale = 1.2
+
+[widget.notifications]
+scale               = 1.25
+hide_when_no_unread = true
+
+[widget.tray]
+hide_passive = false

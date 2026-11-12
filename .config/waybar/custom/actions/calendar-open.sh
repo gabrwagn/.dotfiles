@@ -16,5 +16,5 @@ if [[ -n "$URL" ]]; then
   xdg-open "$URL" &
 else
   # If no URL is found, you can handle it here (optional)
-  alacritty -e calcurse
+  "$TERMINAL" -e calcurse
 fi

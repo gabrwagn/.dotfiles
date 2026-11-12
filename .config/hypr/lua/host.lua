@@ -9,5 +9,6 @@ local host = {
     is_laptop  = hostname == "nausicaa",
     is_desktop = hostname == "mononoke",
 }
+host.terminal = host.is_laptop and "kitty" or "alacritty"
 
 return host

@@ -4,9 +4,12 @@ export PATH="$HOME/.pulumi/bin:$PATH"
 export PATH="/home/gabwag/.yarn/bin:$PATH"
 export PATH="$PATH:/home/gabwag/.pulumi/bin"
 
-# Set default term
-export TERM=alacritty
-export TERMINAL=alacritty
+# Set default term (TERM is left to the terminal itself)
+if [[ "$(hostname)" == "nausicaa" ]]; then
+    export TERMINAL=kitty
+else
+    export TERMINAL=alacritty
+fi
 export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
 
 # Host-specific
@@ -14,5 +17,6 @@ if [[ "$(hostname)" == "nausicaa" ]]; then
     export JIRA_URL="https://timeedit.atlassian.net"
     export JIRA_EMAIL="gabriel.wagner@timeedit.com"
     export JIRA_API_TOKEN="$(secret-tool lookup service jira key api-token)"
+    export README_API_KEY="$(secret-tool lookup service readme key api-token)"
 fi
 

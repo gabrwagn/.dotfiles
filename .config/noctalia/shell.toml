@@ -1,0 +1,74 @@
+# Notification toasts, carrying over the swaync geometry and placement.
+# swaync's timeout/timeout-low/timeout-critical have no global equivalent:
+# noctalia respects the sender's expire timeout and only overrides per filter.
+
+[notification]
+enable_daemon      = true
+position           = "top_center"
+layer              = "overlay"
+background_opacity = 0.7
+border             = true
+offset_x           = 10
+offset_y           = 10
+max_visible        = 3
+
+# Silent toasts. Volume, power and screenshot sounds stay on; enable_sounds is
+# the master switch for all of them.
+[audio]
+enable_notification_sounds = false
+
+# Volume/brightness sliders: vertical, tucked under the bar's right end.
+[osd]
+orientation        = "vertical"
+position           = "top_right"
+position_vertical  = "top_right"
+background_opacity = 0.75
+border             = false
+offset_y           = 0
+scale              = 1.1
+
+# Lock screen. Authenticates through the `login` PAM service, so no extra
+# /etc/pam.d entry is needed. blurred_desktop reproduces what the old
+# scripts/lock did by hand: grim a snapshot, blur it, show it behind hyprlock.
+[lockscreen]
+enabled         = true
+blurred_desktop = true
+blur_intensity  = 0.5
+tint_intensity  = 0.3
+
+# Screenshots, replacing the grim + wl-copy keybind.
+[shell.screenshot]
+save_to_file      = true
+directory         = "~/Pictures/Screenshots"
+filename_pattern  = "%Y-%m-%d_%H-%M-%S"
+copy_to_clipboard = true
+freeze_screen     = true
+show_cursor       = false
+
+# Low-battery warnings. Peripherals only warn when given an explicit
+# threshold, and their UPower paths embed the MAC address, so re-pairing a
+# device silently disables its warning.
+[battery]
+warning_threshold = 10
+
+[battery.device."/org/freedesktop/UPower/devices/battery_hidpp_battery_0"]
+warning_threshold = 15      # MX Vertical
+
+[battery.device."/org/freedesktop/UPower/devices/headset_dev_F8_4E_17_DE_F3_61"]
+warning_threshold = 20
+
+# hypridle owns idle on this machine; see hypr/hypridle.conf.
+#
+# Two idle managers ran at once on 2026-09-10 and noctalia's screen_off powers
+# down every output, including the HDMI link, which wedges apple-dcp until the
+# session restarts. Keeping idle in a separate process also means a noctalia
+# crash cannot take idle locking down with it, since the lock screen is
+# noctalia's too.
+[idle.behavior.lock]
+enabled = false
+
+[idle.behavior.screen-off]
+enabled = false
+
+[idle.behavior.lock-and-suspend]
+enabled = false

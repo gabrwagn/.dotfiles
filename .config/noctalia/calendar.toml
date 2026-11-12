@@ -1,0 +1,26 @@
+# Calendar service. Replaces the calcurse + custom/calendar waybar script.
+#
+# The account is declared here; authorization happens in
+# Settings -> Services -> Calendar -> edit account -> Save and Connect,
+# which opens a browser flow. No Google Cloud project or client secret is
+# needed. The refresh token is stored in the Secret Service (gnome-keyring,
+# already started from hyprland's startup.lua), never in this repo.
+
+[calendar]
+enabled           = true
+refresh_minutes   = 15
+event_date_format = "%A %e %B"
+event_time_format = "%H:%M"
+
+[calendar.account.google]
+type  = "google"
+name  = "Gabriel Personal"
+color = "secondary"
+
+[calendar.account.personal_google]
+type  = "google"
+name  = "Gabriel TimeEdit"
+
+[control_center.calendar]
+show_events_card = true
+show_week_numbers = true

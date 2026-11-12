@@ -1,0 +1,15 @@
+id = "gabwag/audio-sink-icon"
+name = "Audio Sink Icon"
+version = "1.0.0"
+plugin_api = 6
+author = "gabwag"
+license = "MIT"
+icon = "headphones"
+description = "Show a headphones glyph while the default audio sink is a Bluetooth device"
+tags = ["audio", "bar"]
+
+dependencies = ["pactl"]
+
+[[widget]]
+id = "sink-icon"
+entry = "sink.luau"

@@ -84,7 +84,6 @@ slider {
 
 .floating-notifications.background .notification-row .notification-background .notification .notification-content .body {
   color: @text;
-  max-height: 8em;
 }
 
 .floating-notifications.background .notification-row .notification-background .notification>*:last-child>* {
