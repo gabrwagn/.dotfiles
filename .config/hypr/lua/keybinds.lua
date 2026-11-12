@@ -32,10 +32,9 @@ hl.bind("ALT + l", hl.dsp.exec_cmd(ipc .. "session lock"))
 -- current HDMI state. Undocking has left the machine with no enabled output
 -- before, which is otherwise only escapable by holding the power button.
 hl.bind(mainMod .. " + SHIFT + R", function()
-    if _G.__set_docked then
-        local docked = hl.get_monitor("HDMI-A-1") ~= nil
-        _G.__set_docked(docked)
-        if not docked then
+    if _G.__monitors_apply then
+        _G.__monitors_apply(true)
+        if not hl.get_monitor("HDMI-A-1") then
             hl.dispatch(hl.dsp.exec_cmd("brightnessctl -d apple-panel-bl set 50%"))
         end
     end

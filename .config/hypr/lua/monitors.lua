@@ -3,97 +3,68 @@
 local host = require("lua.host")
 
 if host.is_laptop then
-    -- Docked: external only, internal panel off. Undocked: panel only.
-    --
-    -- apple-dcp on kernel 7.1.13 sometimes wedges on hotplug and refuses to
-    -- turn Hyprland's modeset commit into an actual mode:
-    --   cb_hotplug() connected:1, valid_mode:0
-    --   swap_submit_dcp: swallowed swap ... fControllerPowerState is 0
-    --   swap_submit_dcp: swallowed swap ... timings are not enabled
-    -- Hyprland's own log still shows "drm: Modesetting HDMI-A-1 with
-    -- 4096x2160@60.00Hz", so the failure is below the compositor.
-    --
-    -- Mirroring instead of disabling eDP-1 was tried as a workaround on the
-    -- theory that releasing the internal CRTC caused it. It does not hold up:
-    -- on 2026-09-09 it wedged while mirrored and never disabled, and on a
-    -- different controller (289c00000.dcp, not 38bc00000.dcp), so it is not
-    -- tied to one DCP instance either.
-    --
-    -- Logging out and back in clears it - the driver recovers once DRM master
-    -- is released - so a wedge costs a relog, not a reboot. Kernel 7.1.6
-    -- (still installed) predates the regression if this gets tiring.
-    --
-    -- mode = preferred -> 4096x2160@60 (timingID 92), the timing this TV
-    -- accepts. Do not pin 3840x2160 (timingID 84), it fails.
-    -- scale 1.066667 -> 3840 logical width.
-    local function pull_workspaces(output)
-        -- Hyprland 0.56.2 segfaults in CMonitor::changeWorkspace when a
-        -- workspace dispatcher targets a workspace whose monitor is gone
-        -- (crash report 1707, 2026-09-09: undocked, then SUPER+<n>).
-        -- Only existing workspaces: moving a missing one logs a "Workspace
-        -- not found" warning, and at config load none exist yet.
-        for i = 1, 10 do
-            if hl.get_workspace(i) then
-                hl.dispatch(hl.dsp.workspace.move({ workspace = i, monitor = output }))
-            end
-        end
+    -- TV. supports_hdr = -1: apple-dcp can't signal HDR to the TV (no
+    -- HDR_OUTPUT_METADATA prop), so auto-HDR would only wash colors out.
+    hl.monitor({ output = "HDMI-A-1", mode = "preferred", position = "0x0", scale = 1.066667, supports_hdr = -1 })
+
+    local function edp(mode)
+        hl.monitor({ output = "eDP-1", disabled = false, mode = mode, position = "0x0", scale = 1.5 })
     end
 
-    local function set_docked(docked)
-        if docked then
-            hl.monitor({ output = "HDMI-A-1", mode = "preferred", position = "0x0", scale = 1.066667 })
+    -- Docked: TV only. Undocked: panel only.
+    -- force re-runs the panel wake-up even if eDP-1 already looks enabled
+    -- (session start, recovery bind).
+    local function apply(force)
+        if hl.get_monitor("HDMI-A-1") then
             hl.monitor({ output = "eDP-1", disabled = true })
-            pull_workspaces("HDMI-A-1")
-        else
-            -- `disabled = false` is mandatory: re-stating mode/position/scale
-            -- does not clear the flag set above, and on 2026-09-10 that left
-            -- the machine with no enabled output after an undock. The kernel
-            -- logged no modeset attempt at all and it needed a power cycle.
-            hl.monitor({
-                output   = "eDP-1",
-                disabled = false,
-                mode     = "preferred",
-                position = "0x0",
-                scale    = 1.5,
-                mirror   = "none",
-            })
-            hl.dispatch(hl.dsp.dpms({ action = "on", monitor = "eDP-1" }))
-            pull_workspaces("eDP-1")
-
-            -- The first modeset after panel power-on is rejected by DCP
-            -- firmware (set_digital_out_mode returned 8000000a) because the
-            -- panel asserts HPD only afterwards; the driver does not retry,
-            -- so the panel stays black while Hyprland thinks it is on.
-            -- Disable/enable does not help (it power-cycles the panel again).
-            -- Bouncing the refresh rate while enabled re-issues the modeset
-            -- to an awake panel. Verified 2026-11-06.
-            hl.timer(function()
-                if hl.get_monitor("HDMI-A-1") then return end
-                local function edp(mode)
-                    hl.monitor({ output = "eDP-1", disabled = false, mode = mode,
-                                 position = "0x0", scale = 1.5, mirror = "none" })
-                end
-                edp("3024x1890@60")
-                hl.timer(function()
-                    if hl.get_monitor("HDMI-A-1") then return end
-                    edp("preferred")
-                end, { timeout = 500, type = "oneshot" })
-            end, { timeout = 1500, type = "oneshot" })
+            return
         end
+        if hl.get_monitor("eDP-1") and not force then
+            -- Already on: restate the identical rule so a reload matches the
+            -- live state and skips the modeset.
+            edp("preferred")
+            return
+        end
+        -- DCP firmware rejects the first modeset after panel power-on
+        -- (set_digital_out_mode returned 8000000a) and doesn't retry, leaving
+        -- the panel black. Wake it at 60Hz, then switch to preferred (120Hz):
+        -- a different mode, so Hyprland re-issues the modeset to the awake panel.
+        edp("3024x1890@60")
+        hl.timer(function()
+            if not hl.get_monitor("HDMI-A-1") then edp("preferred") end
+        end, { timeout = 1500, type = "oneshot" })
     end
 
-    _G.__set_docked = set_docked
-    set_docked(hl.get_monitor("HDMI-A-1") ~= nil)
-
-    if not _G.__laptop_mon_registered then
-        _G.__laptop_mon_registered = true
-        hl.on("monitor.added", function(m)
-            if m and m.name == "HDMI-A-1" then _G.__set_docked(true) end
-        end)
-        hl.on("monitor.removed", function(m)
-            if m and m.name == "HDMI-A-1" then _G.__set_docked(false) end
-        end)
+    -- Debounce: a TV switching inputs flaps HPD several times in a few
+    -- seconds. Every output add/remove risks Hyprland's wl_output registry
+    -- race (hyprwm/Hyprland#12996), which kills clients, the lock included.
+    local gen = 0
+    local function schedule(m)
+        if not (m and m.name == "HDMI-A-1") then return end
+        gen = gen + 1
+        local mine = gen
+        hl.timer(function()
+            if mine == gen then apply() end
+        end, { timeout = 2000, type = "oneshot" })
     end
+    hl.on("monitor.added", schedule)
+    hl.on("monitor.removed", schedule)
+
+    -- The Lua state (and _G) is rebuilt on every reload, so a per-instance
+    -- marker file tells session start (force the panel wake-up) from reload.
+    local marker = os.getenv("XDG_RUNTIME_DIR") .. "/hypr/"
+        .. os.getenv("HYPRLAND_INSTANCE_SIGNATURE") .. "/monitors-loaded"
+    local f = io.open(marker, "r")
+    if f then
+        f:close()
+        apply(false)
+    else
+        apply(true)
+        f = io.open(marker, "w")
+        if f then f:close() end
+    end
+
+    _G.__monitors_apply = apply
 
 elseif host.is_desktop then
     hl.monitor({ output = "HDMI-A-2", mode = "4096x2160@120", position = "0x0", scale = "auto" })

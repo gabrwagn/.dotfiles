@@ -142,6 +142,9 @@ hl.config({
         disable_splash_rendering = true,
         mouse_move_enables_dpms  = true,
         key_press_enables_dpms   = true,
+        -- If the lock client dies, allow relocking from a TTY
+        -- (`noctalia msg session lock`) instead of logging out.
+        allow_session_lock_restore = true,
     },
 
     -- Render X11 clients at native pixel density instead of letting the
