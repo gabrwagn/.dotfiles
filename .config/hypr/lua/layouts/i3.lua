@@ -150,6 +150,12 @@ local function remove_leaf(ws, root, leaf)
     ws.leaves[leaf.id] = nil
 
     local idx = child_index(p, leaf)
+    if not idx then
+        -- Stale parent pointer: the leaf is already detached. table.remove
+        -- with a nil index would drop the parent's last child instead.
+        leaf.parent = nil
+        return root
+    end
     table.remove(p.children, idx)
     -- Adjust ratios
     if p.ratios then
